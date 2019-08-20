@@ -19,6 +19,7 @@ repositories {
 
 dependencies {
     shadow 'org.spongepowered:spongeapi:7.1.0'
+    shadow 'org.spongepowered:spongecommon:7.1.0:dev'
     implementation 'com.google.code.gson:gson:2.8.5'
 }
 

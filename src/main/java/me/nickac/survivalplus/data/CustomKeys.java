@@ -1,23 +1,26 @@
 package me.nickac.survivalplus.data;
 
+import com.google.common.reflect.TypeToken;
+import me.nickac.survivalplus.custom.items.CustomItemInformation;
 import org.spongepowered.api.data.DataQuery;
 import org.spongepowered.api.data.key.Key;
 import org.spongepowered.api.data.value.mutable.Value;
-import org.spongepowered.api.util.TypeTokens;
 
+@SuppressWarnings("UnstableApiUsage")
 public class CustomKeys {
+
     private CustomKeys() {
     }
 
     public static void dummy() {} // invoke static constructor
-    public static final Key<Value<Boolean>> MANAGED_TYPE;
+    public static final Key<Value<CustomItemInformation>> CUSTOM_ITEM_INFORMATION_VALUE;
 
     static {
-            MANAGED_TYPE = Key.builder()
-                .type(TypeTokens.BOOLEAN_VALUE_TOKEN)
-                .id("managed_type")
-                .name("Is Managed")
-                .query(DataQuery.of('.', "managed_type"))
+        CUSTOM_ITEM_INFORMATION_VALUE = Key.builder()
+                .type(new TypeToken<Value<CustomItemInformation>>() {})
+                .id("custom_item_information")
+                .name("Custom Item Information")
+                .query(DataQuery.of('.', "custom_item_information"))
                 .build();
 
     }

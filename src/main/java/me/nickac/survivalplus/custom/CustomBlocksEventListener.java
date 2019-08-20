@@ -1,18 +1,13 @@
 package me.nickac.survivalplus.custom;
 
 import com.flowpowered.math.vector.Vector3d;
-import com.google.common.cache.Cache;
-import com.google.common.cache.CacheBuilder;
 import com.google.inject.Inject;
-import me.nickac.survivalplus.SurvivalPlus;
-import me.nickac.survivalplus.data.CustomKeys;
-import me.nickac.survivalplus.data.ManagedTypeData;
+import me.nickac.survivalplus.custom.items.CustomItemInformation;
+import me.nickac.survivalplus.data.CustomItemInformationData;
 import me.nickac.survivalplus.managers.CustomItemManager;
-import org.spongepowered.api.Sponge;
 import org.spongepowered.api.block.BlockSnapshot;
 import org.spongepowered.api.block.BlockState;
 import org.spongepowered.api.block.BlockTypes;
-import org.spongepowered.api.data.LocatableSnapshot;
 import org.spongepowered.api.data.key.Keys;
 import org.spongepowered.api.effect.particle.ParticleEffect;
 import org.spongepowered.api.effect.particle.ParticleOptions;
@@ -24,9 +19,7 @@ import org.spongepowered.api.entity.living.player.Player;
 import org.spongepowered.api.event.Listener;
 import org.spongepowered.api.event.block.ChangeBlockEvent;
 import org.spongepowered.api.event.block.InteractBlockEvent;
-import org.spongepowered.api.event.cause.EventContextKey;
 import org.spongepowered.api.event.cause.EventContextKeys;
-import org.spongepowered.api.event.entity.SpawnEntityEvent;
 import org.spongepowered.api.event.filter.cause.First;
 import org.spongepowered.api.event.item.inventory.InteractItemEvent;
 import org.spongepowered.api.item.inventory.ItemStackSnapshot;
@@ -37,15 +30,11 @@ import org.spongepowered.api.world.World;
 
 import java.util.Objects;
 import java.util.Optional;
-import java.util.concurrent.TimeUnit;
 
 public class CustomBlocksEventListener {
 
     @Inject
     private CustomItemManager itemManager;
-
-    @Inject
-    private SurvivalPlus plugin;
 
     @Listener
     public void onInteractBlock(InteractBlockEvent.Secondary event, @First Player p) {
@@ -55,30 +44,29 @@ public class CustomBlocksEventListener {
 
         ItemStackSnapshot snapshot = item.get();
 
+        if (itemManager.isManagedItem(snapshot)) {
 
-        if (itemManager.isManagedItem(snapshot.toContainer())) {
+            CustomItemInformation info = itemManager.getCustomItemDataFromItem(snapshot);
+/*
             Location<World> loc =
                     event.getTargetBlock().getLocation().orElse(p.getLocation()).getBlockRelative(event.getTargetSide());
-
+*/
             event.setCancelled(true);
-
+/*
             if (!loc.getExtent().getIntersectingEntities(new AABB(loc.getBlockPosition(),
                     loc.getBlockPosition().add(1, 1, 1))).isEmpty()) return;
 
             loc.setBlock(BlockState.builder()
                     .blockType(BlockTypes.MOB_SPAWNER)
-                    .add(Sponge.getDataManager().getManipulatorBuilder(ManagedTypeData.class).get().create().asImmutable())
                     .build());
 
-            loc.getTileEntity().get().offer(loc.getTileEntity().get().getOrCreate(ManagedTypeData.class).get());
+            loc.getTileEntity().get().offer(loc.getTileEntity().get().getOrCreate(CustomItemInformationData.class).get());
 
             loc.offer(Keys.SPAWNER_REQUIRED_PLAYER_RANGE, (short) 0);
             loc.offer(Keys.SPAWNER_MAXIMUM_NEARBY_ENTITIES, (short) 0);
             loc.offer(Keys.SPAWNER_MAXIMUM_DELAY, (short) 0);
             loc.offer(Keys.SPAWNER_MINIMUM_DELAY, (short) 0);
             loc.offer(Keys.SPAWNER_SPAWN_RANGE, (short) 0);
-
-            loc.getTileEntity().get().offer(CustomKeys.MANAGED_TYPE, true);
 
             ArmorStand armorStand = (ArmorStand) loc.getExtent().createEntity(EntityTypes.ARMOR_STAND,
                     loc.getBlockPosition());
@@ -94,10 +82,11 @@ public class CustomBlocksEventListener {
                             .from(armorStand)
                             .build(), 100);
             loc.offer(Keys.SPAWNER_NEXT_ENTITY_TO_SPAWN, entity);
-            armorStand.remove();
+            armorStand.remove();*/
         }
     }
 
+/*
     @Listener
     public void onChangeBlockBreak(ChangeBlockEvent.Break event, @First Player pl) {
         BlockSnapshot block = event.getContext().get(EventContextKeys.BLOCK_HIT).orElse(null);
@@ -117,10 +106,11 @@ public class CustomBlocksEventListener {
         }
 
     }
+*/
 
     @Listener
     public void onInteractItem(InteractItemEvent event, @First Player p) {
-        if (itemManager.isManagedItem(event.getItemStack().toContainer())) {
+        if (itemManager.isManagedItem(event.getItemStack())) {
             event.setCancelled(true);
         }
     }
