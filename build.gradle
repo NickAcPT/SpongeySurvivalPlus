@@ -1,5 +1,6 @@
 plugins {
-    id 'org.spongepowered.plugin' version '0.8.1'
+    id 'com.github.johnrengelman.shadow' version '5.1.0'
+    id 'org.spongepowered.plugin' version '0.9.0'
 }
 
 group = pluginGroup
@@ -8,8 +9,17 @@ version = pluginVersion
 sourceCompatibility = '1.8'
 targetCompatibility = '1.8'
 
+repositories {
+    jcenter()
+}
+
+//shadowJar {
+//    relocate ('com.google.common', 'google.stuff')
+//}
+
 dependencies {
-    compile 'org.spongepowered:spongeapi:7.1.0'
+    shadow 'org.spongepowered:spongeapi:7.1.0'
+    implementation 'com.google.code.gson:gson:2.8.5'
 }
 
 sponge.plugin.id = pluginId

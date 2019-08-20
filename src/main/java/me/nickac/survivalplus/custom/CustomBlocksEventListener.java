@@ -1,18 +1,32 @@
 package me.nickac.survivalplus.custom;
 
 import com.flowpowered.math.vector.Vector3d;
+import com.google.common.cache.Cache;
+import com.google.common.cache.CacheBuilder;
 import com.google.inject.Inject;
+import me.nickac.survivalplus.SurvivalPlus;
+import me.nickac.survivalplus.data.CustomKeys;
+import me.nickac.survivalplus.data.ManagedTypeData;
 import me.nickac.survivalplus.managers.CustomItemManager;
+import org.spongepowered.api.Sponge;
+import org.spongepowered.api.block.BlockSnapshot;
 import org.spongepowered.api.block.BlockState;
 import org.spongepowered.api.block.BlockTypes;
+import org.spongepowered.api.data.LocatableSnapshot;
 import org.spongepowered.api.data.key.Keys;
+import org.spongepowered.api.effect.particle.ParticleEffect;
+import org.spongepowered.api.effect.particle.ParticleOptions;
+import org.spongepowered.api.effect.particle.ParticleTypes;
 import org.spongepowered.api.entity.EntityArchetype;
 import org.spongepowered.api.entity.EntityTypes;
 import org.spongepowered.api.entity.living.ArmorStand;
 import org.spongepowered.api.entity.living.player.Player;
 import org.spongepowered.api.event.Listener;
+import org.spongepowered.api.event.block.ChangeBlockEvent;
 import org.spongepowered.api.event.block.InteractBlockEvent;
+import org.spongepowered.api.event.cause.EventContextKey;
 import org.spongepowered.api.event.cause.EventContextKeys;
+import org.spongepowered.api.event.entity.SpawnEntityEvent;
 import org.spongepowered.api.event.filter.cause.First;
 import org.spongepowered.api.event.item.inventory.InteractItemEvent;
 import org.spongepowered.api.item.inventory.ItemStackSnapshot;
@@ -21,12 +35,17 @@ import org.spongepowered.api.util.weighted.WeightedSerializableObject;
 import org.spongepowered.api.world.Location;
 import org.spongepowered.api.world.World;
 
+import java.util.Objects;
 import java.util.Optional;
+import java.util.concurrent.TimeUnit;
 
 public class CustomBlocksEventListener {
 
     @Inject
     private CustomItemManager itemManager;
+
+    @Inject
+    private SurvivalPlus plugin;
 
     @Listener
     public void onInteractBlock(InteractBlockEvent.Secondary event, @First Player p) {
@@ -48,8 +67,10 @@ public class CustomBlocksEventListener {
 
             loc.setBlock(BlockState.builder()
                     .blockType(BlockTypes.MOB_SPAWNER)
+                    .add(Sponge.getDataManager().getManipulatorBuilder(ManagedTypeData.class).get().create().asImmutable())
                     .build());
 
+            loc.getTileEntity().get().offer(loc.getTileEntity().get().getOrCreate(ManagedTypeData.class).get());
 
             loc.offer(Keys.SPAWNER_REQUIRED_PLAYER_RANGE, (short) 0);
             loc.offer(Keys.SPAWNER_MAXIMUM_NEARBY_ENTITIES, (short) 0);
@@ -57,6 +78,7 @@ public class CustomBlocksEventListener {
             loc.offer(Keys.SPAWNER_MINIMUM_DELAY, (short) 0);
             loc.offer(Keys.SPAWNER_SPAWN_RANGE, (short) 0);
 
+            loc.getTileEntity().get().offer(CustomKeys.MANAGED_TYPE, true);
 
             ArmorStand armorStand = (ArmorStand) loc.getExtent().createEntity(EntityTypes.ARMOR_STAND,
                     loc.getBlockPosition());
@@ -73,8 +95,27 @@ public class CustomBlocksEventListener {
                             .build(), 100);
             loc.offer(Keys.SPAWNER_NEXT_ENTITY_TO_SPAWN, entity);
             armorStand.remove();
-
         }
+    }
+
+    @Listener
+    public void onChangeBlockBreak(ChangeBlockEvent.Break event, @First Player pl) {
+        BlockSnapshot block = event.getContext().get(EventContextKeys.BLOCK_HIT).orElse(null);
+        if (block == null || !block.getLocation().isPresent()) return;
+
+        ManagedTypeData.Immutable data =
+                event.getTransactions().stream()
+                        .map(c -> c.getOriginal().get(ManagedTypeData.Immutable.class).orElse(null))
+                        .filter(Objects::nonNull)
+                        .findFirst().orElse(null);
+        if (data != null) {
+            pl.spawnParticles(ParticleEffect.builder()
+                    .type(ParticleTypes.BREAK_BLOCK)
+                    .option(ParticleOptions.BLOCK_STATE,
+                            BlockState.builder().blockType(BlockTypes.STONE).build())
+                    .build(), block.getPosition().toDouble());
+        }
+
     }
 
     @Listener
