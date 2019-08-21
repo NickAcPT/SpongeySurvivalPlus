@@ -1,10 +1,10 @@
 package me.nickac.survivalplus.managers;
 
 import com.google.inject.Singleton;
-import me.nickac.survivalplus.custom.items.CustomItemBaseEnum;
-import me.nickac.survivalplus.custom.items.CustomItemInformation;
-import me.nickac.survivalplus.data.CustomItemInformationData;
+import me.nickac.survivalplus.customitems.internal.CustomItemBaseEnum;
+import me.nickac.survivalplus.customitems.internal.CustomItemInformation;
 import me.nickac.survivalplus.data.CustomKeys;
+import me.nickac.survivalplus.data.impl.CustomItemInfoData;
 import org.spongepowered.api.data.DataContainer;
 import org.spongepowered.api.data.DataTransactionResult;
 import org.spongepowered.api.data.key.Keys;
@@ -25,11 +25,11 @@ public class CustomItemManager {
     }
 
     public boolean isManagedItem(ItemStackSnapshot item) {
-        return item.get(CustomItemInformationData.Immutable.class).isPresent();
+        return item.get(CustomItemInfoData.Immutable.class).isPresent();
     }
 
     public CustomItemInformation getCustomItemDataFromItem(ItemStackSnapshot item) {
-        return item.get(CustomItemInformationData.Immutable.class).get().getValueGetter().get();
+        return item.get(CustomItemInfoData.Immutable.class).get().getValueGetter().get();
     }
 
     public ItemStack generateCustomItemStack(int itemCount) {
@@ -46,7 +46,7 @@ public class CustomItemManager {
                 .build().toContainer();
 
         ItemStack stack = ItemStack.builder().fromContainer(dataContainer).build();
-        stack.offer(stack.getOrCreate(CustomItemInformationData.class).get());
+        stack.offer(stack.getOrCreate(CustomItemInfoData.class).get());
 
         DataTransactionResult result = stack.tryOffer(CustomKeys.CUSTOM_ITEM_INFORMATION_VALUE,
                 info);

@@ -1,4 +1,4 @@
-package me.nickac.survivalplus.custom.items;
+package me.nickac.survivalplus.customitems.internal;
 
 import com.google.inject.Inject;
 import com.google.inject.Injector;
@@ -11,6 +11,9 @@ import org.spongepowered.api.data.DataView;
 import org.spongepowered.api.item.inventory.ItemStack;
 import org.spongepowered.api.plugin.PluginContainer;
 
+/**
+ * Information about the custom item (or block). Not used on the mob spawners
+ */
 @SuppressWarnings("WeakerAccess")
 public class CustomItemInformation implements DataSerializable {
     @Inject
@@ -19,21 +22,28 @@ public class CustomItemInformation implements DataSerializable {
     private static PluginContainer plugin;
     @Inject
     private static Injector injector;
-    private int ordinal = 0;
+    private int ordinal;
     private CustomItemBaseEnum itemBase;
     private String name;
     private int requiredPower;
     private String modelAsset;
+    private Class<? extends CustomItem> itemClass;
 
-    public CustomItemInformation(int ordinal, String name, int requiredPower, String modelAsset) {
+    public CustomItemInformation(int ordinal, String name, int requiredPower, String modelAsset, Class<?
+            extends CustomItem> itemClass) {
         this.ordinal = ordinal;
         this.name = name;
         this.requiredPower = requiredPower;
         this.modelAsset = modelAsset;
+        this.itemClass = itemClass;
     }
 
     public static Builder builder() {
         return injector.getInstance(Builder.class);
+    }
+
+    public Class<? extends CustomItem> getItemClass() {
+        return itemClass;
     }
 
     public String getName() {
@@ -58,11 +68,7 @@ public class CustomItemInformation implements DataSerializable {
         return itemBase;
     }
 
-    public ItemStack getNewStack() {
-        return getNewStack(1);
-    }
-
-    public ItemStack getNewStack(int amount) {
+    public ItemStack getNewItemStack(int amount) {
         ItemStack itemStack = itemManager.generateCustomItemStack(ordinal);
         itemStack.setQuantity(amount);
         return itemStack;
@@ -90,7 +96,7 @@ public class CustomItemInformation implements DataSerializable {
 
     @Override
     public int getContentVersion() {
-        return 0;
+        return 1;
     }
 
     @Override
@@ -120,40 +126,39 @@ public class CustomItemInformation implements DataSerializable {
     }
 
     public static class Builder {
-        @Inject
-        private static PluginContainer plugin;
-
         private int ordinal;
-        private String name = "";
+        private String name;
         private int requiredPower;
-        private String modelAsset = "";
-        private CustomItemBaseEnum itemBase;
+        private String modelAsset;
+        private Class<? extends CustomItem> itemClass;
 
-        public Builder setModelAsset(String modelAsset) {
-            this.modelAsset = modelAsset;
-            return this;
-        }
-
-        public Builder setOrdinal(int ordinal) {
+        public Builder ordinal(int ordinal) {
             this.ordinal = ordinal;
-            this.itemBase = CustomItemBaseEnum.getForCountedItem(ordinal);
             return this;
         }
 
-        public Builder setName(String name) {
+        public Builder named(String name) {
             this.name = name;
             return this;
         }
 
-        public Builder setRequiredPower(int requiredPower) {
+        public Builder requiringPower(int requiredPower) {
             this.requiredPower = requiredPower;
             return this;
         }
 
+        public Builder withModel(String modelAsset) {
+            this.modelAsset = modelAsset;
+            return this;
+        }
+
+        public Builder ownedBy(Class<? extends CustomItem> itemClass) {
+            this.itemClass = itemClass;
+            return this;
+        }
+
         public CustomItemInformation build() {
-            CustomItemInformation info = new CustomItemInformation(ordinal, name, requiredPower, modelAsset);
-            info.itemBase = this.itemBase;
-            return info;
+            return new CustomItemInformation(ordinal, name, requiredPower, modelAsset, itemClass);
         }
     }
 }

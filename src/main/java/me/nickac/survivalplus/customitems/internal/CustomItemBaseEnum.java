@@ -1,4 +1,4 @@
-package me.nickac.survivalplus.custom.items;
+package me.nickac.survivalplus.customitems.internal;
 
 import org.spongepowered.api.item.ItemType;
 import org.spongepowered.api.item.ItemTypes;

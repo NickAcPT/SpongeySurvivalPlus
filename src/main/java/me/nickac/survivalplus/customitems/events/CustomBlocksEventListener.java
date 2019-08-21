@@ -1,9 +1,8 @@
-package me.nickac.survivalplus.custom;
+package me.nickac.survivalplus.customitems.events;
 
 import com.flowpowered.math.vector.Vector3d;
 import com.google.inject.Inject;
-import me.nickac.survivalplus.custom.items.CustomItemInformation;
-import me.nickac.survivalplus.data.CustomItemInformationData;
+import me.nickac.survivalplus.customitems.internal.CustomItemInformation;
 import me.nickac.survivalplus.data.CustomKeys;
 import me.nickac.survivalplus.managers.CustomItemManager;
 import org.spongepowered.api.block.BlockState;
@@ -43,6 +42,7 @@ public class CustomBlocksEventListener {
         if (itemManager.isManagedItem(snapshot)) {
 
             CustomItemInformation info = itemManager.getCustomItemDataFromItem(snapshot);
+
             Location<World> loc =
                     event.getTargetBlock().getLocation().orElse(p.getLocation()).getBlockRelative(event.getTargetSide());
 
@@ -55,7 +55,7 @@ public class CustomBlocksEventListener {
                     .blockType(BlockTypes.MOB_SPAWNER)
                     .build());
 
-            loc.getTileEntity().get().offer(loc.getTileEntity().get().getOrCreate(CustomItemInformationData.class).get());
+//            loc.getTileEntity().get().offer(loc.getTileEntity().get().getOrCreate(CustomItemInformationData.class).get());
 
 
             DataTransactionResult result = loc.offer(CustomKeys.CUSTOM_ITEM_INFORMATION_VALUE, info);
