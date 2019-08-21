@@ -22,7 +22,7 @@ import java.util.Map;
 
 @Singleton
 public class CustomItemManager {
-    private Map<Integer, CustomItemInformation> registeredItems = new HashMap<>();
+    private final Map<Integer, CustomItemInformation> registeredItems = new HashMap<>();
 
     public void registerItem(CustomItemInformation info) {
         Preconditions.checkNotNull(info.getItemClass());

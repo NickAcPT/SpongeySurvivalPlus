@@ -35,7 +35,7 @@ public class ResourcePackManager {
 
     @Inject
     private CustomItemManager itemManager;
-    private String path = "/survivalplus/pack.zip";
+    private final String path = "/survivalplus/pack.zip";
 
     public ResourcePackManager() {
         Supplier<byte[]> packSupplier = Suppliers.memoizeWithExpiration(this::tryGetResourcePackZip, 10,
@@ -52,6 +52,7 @@ public class ResourcePackManager {
             return tryGetResourcePackZip();
         });
     }
+
     private byte[] tryGetResourcePackZip() {
         try {
             return getResourcePackZip();
@@ -110,7 +111,7 @@ public class ResourcePackManager {
         model.withParent("item/handheld");
         model.withTextures(new ResourcePackModel.Textures()
                 .with("layer0", baseEnum.getTextureLoc())
-       );
+        );
 
         model.withOverrides(new ResourcePackModel.ModelOverride()
                 .withPredicate(new ResourcePackModel.ModelOverride.ModelPredicate()

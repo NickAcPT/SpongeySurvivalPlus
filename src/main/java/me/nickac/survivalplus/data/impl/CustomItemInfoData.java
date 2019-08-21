@@ -18,7 +18,8 @@ import org.spongepowered.api.data.value.mutable.Value;
 import java.util.Optional;
 
 @SuppressWarnings("NullableProblems")
-public class CustomItemInfoData extends AbstractSingleData<CustomItemInformation, CustomItemInfoData, CustomItemInfoData.Immutable> {
+public class CustomItemInfoData extends AbstractSingleData<CustomItemInformation, CustomItemInfoData,
+        CustomItemInfoData.Immutable> {
     protected CustomItemInfoData(CustomItemInformation value) {
         super(value, CustomKeys.CUSTOM_ITEM_INFORMATION_VALUE);
     }
@@ -59,14 +60,16 @@ public class CustomItemInfoData extends AbstractSingleData<CustomItemInformation
         return 1;
     }
 
-    public static class Immutable extends AbstractImmutableSingleData<CustomItemInformation, Immutable, CustomItemInfoData> {
+    public static class Immutable extends AbstractImmutableSingleData<CustomItemInformation, Immutable,
+            CustomItemInfoData> {
         Immutable(CustomItemInformation value) {
             super(value, CustomKeys.CUSTOM_ITEM_INFORMATION_VALUE);
         }
 
         @Override
         public ImmutableValue<CustomItemInformation> getValueGetter() {
-            return Sponge.getRegistry().getValueFactory().createValue(CustomKeys.CUSTOM_ITEM_INFORMATION_VALUE, getValue()).asImmutable();
+            return Sponge.getRegistry().getValueFactory().createValue(CustomKeys.CUSTOM_ITEM_INFORMATION_VALUE,
+                    getValue()).asImmutable();
         }
 
         @Override

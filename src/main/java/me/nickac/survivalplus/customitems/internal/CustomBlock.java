@@ -10,8 +10,6 @@ import org.spongepowered.api.block.BlockState;
 import org.spongepowered.api.block.BlockTypes;
 import org.spongepowered.api.block.tileentity.TileEntity;
 import org.spongepowered.api.data.DataContainer;
-import org.spongepowered.api.data.DataQuery;
-import org.spongepowered.api.data.DataTransactionResult;
 import org.spongepowered.api.data.key.Keys;
 import org.spongepowered.api.entity.EntityArchetype;
 import org.spongepowered.api.entity.EntityTypes;
@@ -27,8 +25,10 @@ public abstract class CustomBlock extends CustomItem {
     @Inject
     private static CustomItemManager itemManager;
 
-    public void onPlace(Player player) {}
-    public void onBlockInteract(Player player, InteractBlockEvent event)  {
+    public void onPlace(Player player) {
+    }
+
+    public void onBlockInteract(Player player, InteractBlockEvent event) {
     }
 
     @Override

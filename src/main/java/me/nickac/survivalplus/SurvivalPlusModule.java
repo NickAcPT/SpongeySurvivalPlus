@@ -10,6 +10,5 @@ public class SurvivalPlusModule extends AbstractModule {
         requestStaticInjection(CustomBlock.class);
         requestStaticInjection(CustomItemInformation.class);
         requestStaticInjection(CustomItemData.Builder.class);
-
     }
 }
