@@ -2,9 +2,11 @@ package me.nickac.survivalplus;
 
 import com.google.inject.Inject;
 import com.google.inject.Injector;
-import me.nickac.survivalplus.customitems.events.CustomBlocksEventListener;
-import me.nickac.survivalplus.customitems.internal.CustomItemInformation;
+import me.nickac.survivalplus.customitems.RandomSandBlock;
+import me.nickac.survivalplus.customitems.internal.events.CustomBlocksEventListener;
+import me.nickac.survivalplus.customitems.internal.info.CustomItemInformation;
 import me.nickac.survivalplus.data.CustomKeys;
+import me.nickac.survivalplus.data.impl.CustomItemData;
 import me.nickac.survivalplus.data.impl.CustomItemInfoData;
 import me.nickac.survivalplus.managers.CustomItemManager;
 import org.slf4j.Logger;
@@ -63,9 +65,10 @@ public class SurvivalPlus {
 
     private void registerCustomItems() {
         itemManager.registerItem(CustomItemInformation.builder()
-                .named("Block #1")
+                .named("Custom Sand")
                 .ordinal(1)
                 .withModel("base_block.json")
+                .ownedBy(RandomSandBlock.class)
                 .build());
     }
 
@@ -78,6 +81,14 @@ public class SurvivalPlus {
                 .dataClass(CustomItemInfoData.class)
                 .immutableClass(CustomItemInfoData.Immutable.class)
                 .builder(new CustomItemInfoData.Builder())
+                .buildAndRegister(container);
+
+        DataRegistration.builder()
+                .dataName("Custom Item")
+                .manipulatorId("custom_item")
+                .dataClass(CustomItemData.class)
+                .immutableClass(CustomItemData.Immutable.class)
+                .builder(new CustomItemData.Builder())
                 .buildAndRegister(container);
     }
 

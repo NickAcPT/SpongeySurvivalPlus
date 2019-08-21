@@ -1,13 +1,13 @@
-package me.nickac.survivalplus.customitems.internal;
+package me.nickac.survivalplus.customitems.internal.info;
 
 import com.google.inject.Inject;
 import com.google.inject.Injector;
+import me.nickac.survivalplus.customitems.internal.CustomBlock;
+import me.nickac.survivalplus.customitems.internal.CustomItem;
+import me.nickac.survivalplus.customitems.internal.CustomItemBaseEnum;
 import me.nickac.survivalplus.managers.CustomItemManager;
 import org.spongepowered.api.asset.Asset;
-import org.spongepowered.api.data.DataContainer;
-import org.spongepowered.api.data.DataQuery;
-import org.spongepowered.api.data.DataSerializable;
-import org.spongepowered.api.data.DataView;
+import org.spongepowered.api.data.*;
 import org.spongepowered.api.item.inventory.ItemStack;
 import org.spongepowered.api.plugin.PluginContainer;
 
@@ -38,12 +38,19 @@ public class CustomItemInformation implements DataSerializable {
         this.itemClass = itemClass;
     }
 
-    public static Builder builder() {
-        return injector.getInstance(Builder.class);
+    public static CustomItemInformationBuilder builder() {
+        return injector.getInstance(CustomItemInformationBuilder.class);
     }
 
     public Class<? extends CustomItem> getItemClass() {
         return itemClass;
+    }
+
+    public CustomItem createNewInstance() {
+        CustomItem instance = injector.getInstance(itemClass);
+        if (instance != null)
+            instance.setInfo(this);
+        return instance;
     }
 
     public String getName() {
@@ -94,6 +101,10 @@ public class CustomItemInformation implements DataSerializable {
         return modelAsset;
     }
 
+    public boolean isBlock() {
+        return CustomBlock.class.isAssignableFrom(itemClass);
+    }
+
     @Override
     public int getContentVersion() {
         return 1;
@@ -108,57 +119,29 @@ public class CustomItemInformation implements DataSerializable {
             container.set(Queries.MODEL_ASSET, modelAsset);
         container.set(Queries.ORDINAL, ordinal);
         container.set(Queries.REQUIRED_POWER, requiredPower);
+        if (itemClass != null)
+            container.set(Queries.ITEM_CLASS, itemClass.getName());
         return container;
     }
 
+    @SuppressWarnings("unchecked")
     public void fromView(DataView dataView) {
         setName(dataView.getString(Queries.NAME).orElse(""));
         setModelAsset(dataView.getString(Queries.MODEL_ASSET).orElse(""));
         setOrdinal(dataView.getInt(Queries.ORDINAL).orElse(0));
         setRequiredPower(dataView.getInt(Queries.REQUIRED_POWER).orElse(0));
-    }
-
-    static class Queries {
-        static DataQuery ORDINAL = DataQuery.of("Ordinal");
-        static DataQuery NAME = DataQuery.of("Name");
-        static DataQuery MODEL_ASSET = DataQuery.of("ModelAsset");
-        static DataQuery REQUIRED_POWER = DataQuery.of("RequiredPower");
-    }
-
-    public static class Builder {
-        private int ordinal;
-        private String name;
-        private int requiredPower;
-        private String modelAsset;
-        private Class<? extends CustomItem> itemClass;
-
-        public Builder ordinal(int ordinal) {
-            this.ordinal = ordinal;
-            return this;
-        }
-
-        public Builder named(String name) {
-            this.name = name;
-            return this;
-        }
-
-        public Builder requiringPower(int requiredPower) {
-            this.requiredPower = requiredPower;
-            return this;
-        }
-
-        public Builder withModel(String modelAsset) {
-            this.modelAsset = modelAsset;
-            return this;
-        }
-
-        public Builder ownedBy(Class<? extends CustomItem> itemClass) {
-            this.itemClass = itemClass;
-            return this;
-        }
-
-        public CustomItemInformation build() {
-            return new CustomItemInformation(ordinal, name, requiredPower, modelAsset, itemClass);
+        try {
+            itemClass = (Class<? extends CustomItem>) Class.forName(dataView.getString(Queries.ITEM_CLASS).orElse(""));
+        } catch (ClassNotFoundException e) {
         }
     }
+
+    public static class Queries {
+        public final static DataQuery ORDINAL = DataQuery.of("Ordinal");
+        public final static DataQuery NAME = DataQuery.of("Name");
+        public final static DataQuery MODEL_ASSET = DataQuery.of("ModelAsset");
+        public final static DataQuery REQUIRED_POWER = DataQuery.of("RequiredPower");
+        public final static DataQuery ITEM_CLASS = DataQuery.of("ItemClass");
+    }
+
 }

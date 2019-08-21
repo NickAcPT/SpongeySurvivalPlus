@@ -1,6 +1,6 @@
 package me.nickac.survivalplus.data.impl;
 
-import me.nickac.survivalplus.customitems.internal.CustomItemInformation;
+import me.nickac.survivalplus.customitems.internal.info.CustomItemInformation;
 import me.nickac.survivalplus.data.CustomKeys;
 import org.spongepowered.api.Sponge;
 import org.spongepowered.api.data.DataContainer;
