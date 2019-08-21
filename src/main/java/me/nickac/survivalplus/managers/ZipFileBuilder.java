@@ -12,7 +12,6 @@ import org.apache.commons.compress.utils.IOUtils;
 import org.spongepowered.api.asset.Asset;
 
 import java.io.ByteArrayOutputStream;
-import java.io.File;
 import java.io.FileInputStream;
 import java.io.IOException;
 import java.math.BigDecimal;
@@ -62,9 +61,9 @@ public class ZipFileBuilder {
     }
 
     private String getPathPrefix() {
-        String result = String.join(File.separator, folderPath);
+        String result = String.join("/", folderPath);
         if (!result.isEmpty())
-            result += File.separator;
+            result += "/";
         return result;
     }
 
@@ -81,7 +80,10 @@ public class ZipFileBuilder {
     }
 
     private ZipFileBuilder addEntry(String path, byte[] bytes) throws IOException {
-        zos.putArchiveEntry(new ZipArchiveEntry(getPathPrefix() + path));
+        String endPath = getPathPrefix() + path;
+        endPath = endPath.replace('\\', '/');
+
+        zos.putArchiveEntry(new ZipArchiveEntry(endPath));
         zos.write(bytes);
         zos.closeArchiveEntry();
         zos.flush();
