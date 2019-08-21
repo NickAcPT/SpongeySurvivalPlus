@@ -72,13 +72,13 @@ public class SurvivalPlus {
     private void registerKeys() {
         CustomKeys.dummy();
 
-DataRegistration.builder()
-    .dataName("Managed Type")
-    .manipulatorId("custom_item_information")
-    .dataClass(CustomItemInformationData.class)
-    .immutableClass(CustomItemInformationData.Immutable.class)
-    .builder(new CustomItemInformationData.Builder())
-    .buildAndRegister(container);
+        DataRegistration.builder()
+                .dataName("Managed Type")
+                .manipulatorId("custom_item_information")
+                .dataClass(CustomItemInformationData.class)
+                .immutableClass(CustomItemInformationData.Immutable.class)
+                .builder(new CustomItemInformationData.Builder())
+                .buildAndRegister(container);
     }
 
     @Listener

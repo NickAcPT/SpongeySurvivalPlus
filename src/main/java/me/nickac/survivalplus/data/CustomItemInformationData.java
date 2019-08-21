@@ -2,7 +2,9 @@ package me.nickac.survivalplus.data;
 
 import me.nickac.survivalplus.custom.items.CustomItemInformation;
 import org.spongepowered.api.Sponge;
-import org.spongepowered.api.data.*;
+import org.spongepowered.api.data.DataContainer;
+import org.spongepowered.api.data.DataHolder;
+import org.spongepowered.api.data.DataView;
 import org.spongepowered.api.data.manipulator.DataManipulatorBuilder;
 import org.spongepowered.api.data.manipulator.immutable.common.AbstractImmutableSingleData;
 import org.spongepowered.api.data.manipulator.mutable.common.AbstractSingleData;
@@ -15,7 +17,8 @@ import org.spongepowered.api.data.value.mutable.Value;
 import java.util.Optional;
 
 @SuppressWarnings("NullableProblems")
-    public class CustomItemInformationData extends AbstractSingleData<CustomItemInformation, CustomItemInformationData, CustomItemInformationData.Immutable> {
+public class CustomItemInformationData extends AbstractSingleData<CustomItemInformation, CustomItemInformationData,
+        CustomItemInformationData.Immutable> {
     protected CustomItemInformationData(CustomItemInformation value) {
         super(value, CustomKeys.CUSTOM_ITEM_INFORMATION_VALUE);
     }
@@ -57,14 +60,16 @@ import java.util.Optional;
         return 1;
     }
 
-    public static class Immutable extends AbstractImmutableSingleData<CustomItemInformation, Immutable, CustomItemInformationData> {
+    public static class Immutable extends AbstractImmutableSingleData<CustomItemInformation, Immutable,
+            CustomItemInformationData> {
         Immutable(CustomItemInformation value) {
             super(value, CustomKeys.CUSTOM_ITEM_INFORMATION_VALUE);
         }
 
         @Override
         public ImmutableValue<CustomItemInformation> getValueGetter() {
-            return Sponge.getRegistry().getValueFactory().createValue(CustomKeys.CUSTOM_ITEM_INFORMATION_VALUE, getValue()).asImmutable();
+            return Sponge.getRegistry().getValueFactory().createValue(CustomKeys.CUSTOM_ITEM_INFORMATION_VALUE,
+                    getValue()).asImmutable();
         }
 
         @Override
@@ -96,7 +101,7 @@ import java.util.Optional;
         @Override
         protected Optional<CustomItemInformationData> buildContent(DataView container) throws InvalidDataException {
             CustomItemInformationData obj = create();
-            obj.getValueGetter().get().fromView(((DataView)container.get(CustomKeys.CUSTOM_ITEM_INFORMATION_VALUE.getQuery()).get()));
+            obj.getValueGetter().get().fromView(((DataView) container.get(CustomKeys.CUSTOM_ITEM_INFORMATION_VALUE.getQuery()).get()));
             return Optional.of(obj);
         }
     }

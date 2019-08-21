@@ -4,20 +4,17 @@ import com.flowpowered.math.vector.Vector3d;
 import com.google.inject.Inject;
 import me.nickac.survivalplus.custom.items.CustomItemInformation;
 import me.nickac.survivalplus.data.CustomItemInformationData;
+import me.nickac.survivalplus.data.CustomKeys;
 import me.nickac.survivalplus.managers.CustomItemManager;
-import org.spongepowered.api.block.BlockSnapshot;
 import org.spongepowered.api.block.BlockState;
 import org.spongepowered.api.block.BlockTypes;
+import org.spongepowered.api.data.DataTransactionResult;
 import org.spongepowered.api.data.key.Keys;
-import org.spongepowered.api.effect.particle.ParticleEffect;
-import org.spongepowered.api.effect.particle.ParticleOptions;
-import org.spongepowered.api.effect.particle.ParticleTypes;
 import org.spongepowered.api.entity.EntityArchetype;
 import org.spongepowered.api.entity.EntityTypes;
 import org.spongepowered.api.entity.living.ArmorStand;
 import org.spongepowered.api.entity.living.player.Player;
 import org.spongepowered.api.event.Listener;
-import org.spongepowered.api.event.block.ChangeBlockEvent;
 import org.spongepowered.api.event.block.InteractBlockEvent;
 import org.spongepowered.api.event.cause.EventContextKeys;
 import org.spongepowered.api.event.filter.cause.First;
@@ -28,7 +25,6 @@ import org.spongepowered.api.util.weighted.WeightedSerializableObject;
 import org.spongepowered.api.world.Location;
 import org.spongepowered.api.world.World;
 
-import java.util.Objects;
 import java.util.Optional;
 
 public class CustomBlocksEventListener {
@@ -47,12 +43,11 @@ public class CustomBlocksEventListener {
         if (itemManager.isManagedItem(snapshot)) {
 
             CustomItemInformation info = itemManager.getCustomItemDataFromItem(snapshot);
-/*
             Location<World> loc =
                     event.getTargetBlock().getLocation().orElse(p.getLocation()).getBlockRelative(event.getTargetSide());
-*/
+
             event.setCancelled(true);
-/*
+
             if (!loc.getExtent().getIntersectingEntities(new AABB(loc.getBlockPosition(),
                     loc.getBlockPosition().add(1, 1, 1))).isEmpty()) return;
 
@@ -62,6 +57,8 @@ public class CustomBlocksEventListener {
 
             loc.getTileEntity().get().offer(loc.getTileEntity().get().getOrCreate(CustomItemInformationData.class).get());
 
+
+            DataTransactionResult result = loc.offer(CustomKeys.CUSTOM_ITEM_INFORMATION_VALUE, info);
             loc.offer(Keys.SPAWNER_REQUIRED_PLAYER_RANGE, (short) 0);
             loc.offer(Keys.SPAWNER_MAXIMUM_NEARBY_ENTITIES, (short) 0);
             loc.offer(Keys.SPAWNER_MAXIMUM_DELAY, (short) 0);
@@ -75,14 +72,14 @@ public class CustomBlocksEventListener {
             armorStand.offer(armorStand.marker().set(true));
             armorStand.setHeadRotation(new Vector3d(0, 0, 0));
             armorStand.offer(Keys.INVISIBLE, true);
-            armorStand.setHelmet(itemManager.generateCustomItemStack(1));
+            armorStand.setHelmet(itemManager.generateCustomItemStack(info.getOrdinal()));
 
             WeightedSerializableObject<EntityArchetype> entity =
                     new WeightedSerializableObject<>(EntityArchetype.builder()
                             .from(armorStand)
                             .build(), 100);
             loc.offer(Keys.SPAWNER_NEXT_ENTITY_TO_SPAWN, entity);
-            armorStand.remove();*/
+            armorStand.remove();
         }
     }
 

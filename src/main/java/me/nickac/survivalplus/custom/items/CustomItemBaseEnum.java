@@ -16,14 +16,6 @@ public enum CustomItemBaseEnum {
         this.itemType = itemType;
     }
 
-    public ItemType getItemType() {
-        return itemType;
-    }
-
-    public int getMaxDamage() {
-        return maxDamage;
-    }
-
     public static CustomItemBaseEnum getForCountedItem(int count) {
         int innerCount = 0;
         for (CustomItemBaseEnum val : CustomItemBaseEnum.values()) {
@@ -32,5 +24,13 @@ public enum CustomItemBaseEnum {
             innerCount += val.maxDamage;
         }
         return CustomItemBaseEnum.values()[CustomItemBaseEnum.values().length - 1];
+    }
+
+    public ItemType getItemType() {
+        return itemType;
+    }
+
+    public int getMaxDamage() {
+        return maxDamage;
     }
 }

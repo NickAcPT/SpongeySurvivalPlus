@@ -1,8 +1,8 @@
 package me.nickac.survivalplus.managers;
 
 import com.google.inject.Singleton;
-import me.nickac.survivalplus.custom.items.CustomItemInformation;
 import me.nickac.survivalplus.custom.items.CustomItemBaseEnum;
+import me.nickac.survivalplus.custom.items.CustomItemInformation;
 import me.nickac.survivalplus.data.CustomItemInformationData;
 import me.nickac.survivalplus.data.CustomKeys;
 import org.spongepowered.api.data.DataContainer;
