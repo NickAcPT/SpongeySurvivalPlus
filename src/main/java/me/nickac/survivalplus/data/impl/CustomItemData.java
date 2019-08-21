@@ -110,9 +110,7 @@ public class CustomItemData extends AbstractSingleData<CustomItem, CustomItemDat
                         .getInt(CustomItemInformation.Queries.ORDINAL)
                         .orElse(0);
 
-                CustomItemInformation info =
-                        itemManager
-                                .getRegisteredItemInfoForOrdinal(ordinal);
+                CustomItemInformation info = itemManager.getRegisteredItemInfoForOrdinal(ordinal);
                 value.setValue(info.createNewInstance());
             }
             return Optional.of(value);

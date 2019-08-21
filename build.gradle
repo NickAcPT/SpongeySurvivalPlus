@@ -13,13 +13,14 @@ repositories {
     jcenter()
 }
 
-//shadowJar {
-//    relocate ('com.google.common', 'google.stuff')
-//}
-
 dependencies {
     shadow 'org.spongepowered:spongeapi:7.1.0'
+    compile "com.sparkjava:spark-core:2.8.0"
     implementation 'com.google.code.gson:gson:2.8.5'
+}
+
+shadowJar {
+    relocate('javax', 'javaex')
 }
 
 sponge.plugin.id = pluginId

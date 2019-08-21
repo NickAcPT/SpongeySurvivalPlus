@@ -16,6 +16,7 @@ import org.spongepowered.api.item.inventory.ItemStackSnapshot;
 import org.spongepowered.api.text.Text;
 import org.spongepowered.api.text.format.TextColors;
 
+import java.util.Collection;
 import java.util.HashMap;
 import java.util.Map;
 
@@ -69,6 +70,10 @@ public class CustomItemManager {
 
         return stack;
 
+    }
+
+    public Collection<CustomItemInformation> getRegisteredItems() {
+        return registeredItems.values();
     }
 
     public CustomItemInformation getRegisteredItemInfoForOrdinal(int itemCount) {

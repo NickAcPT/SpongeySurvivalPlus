@@ -72,6 +72,8 @@ public class CustomItemInformation implements DataSerializable {
     }
 
     public CustomItemBaseEnum getItemBase() {
+        if (itemBase == null)
+            itemBase = CustomItemBaseEnum.getForCountedItem(ordinal);
         return itemBase;
     }
 

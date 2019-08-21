@@ -9,6 +9,7 @@ import me.nickac.survivalplus.data.CustomKeys;
 import me.nickac.survivalplus.data.impl.CustomItemData;
 import me.nickac.survivalplus.data.impl.CustomItemInfoData;
 import me.nickac.survivalplus.managers.CustomItemManager;
+import me.nickac.survivalplus.managers.ResourcePackManager;
 import org.slf4j.Logger;
 import org.spongepowered.api.Sponge;
 import org.spongepowered.api.command.CommandResult;
@@ -44,6 +45,7 @@ public class SurvivalPlus {
     private Path pluginPath;
 
     private CustomItemManager itemManager;
+    private ResourcePackManager resourcePackManager;
 
     @Inject
     private Injector injector;
@@ -53,14 +55,16 @@ public class SurvivalPlus {
 
     @Listener
     public void onGamePreInitialization(GamePreInitializationEvent event) {
-        createItemManager();
+        prepareStuff();
         registerKeys();
         registerCustomItems();
     }
 
-    private void createItemManager() {
+    private void prepareStuff() {
         injector = injector.createChildInjector(new SurvivalPlusModule());
         itemManager = injector.getInstance(CustomItemManager.class);
+        Sponge.getEventManager()
+                .registerListeners(this, resourcePackManager = injector.getInstance(ResourcePackManager.class));
     }
 
     private void registerCustomItems() {

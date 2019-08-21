@@ -1,12 +1,11 @@
 package me.nickac.survivalplus.model;
 
+import com.google.common.collect.Streams;
 import com.google.gson.annotations.Expose;
 import com.google.gson.annotations.SerializedName;
 
-import java.util.ArrayList;
-import java.util.HashMap;
-import java.util.List;
-import java.util.Map;
+import java.util.*;
+import java.util.stream.Collectors;
 
 @SuppressWarnings("ALL")
 public class ResourcePackModel {
@@ -169,8 +168,9 @@ public class ResourcePackModel {
         this.overrides = overrides;
     }
 
-    public ResourcePackModel withOverrides(List<ModelOverride> overrides) {
-        this.overrides = overrides;
+
+    public ResourcePackModel withOverrides(ModelOverride... overrides) {
+        this.overrides = Streams.concat(this.overrides.stream(), Arrays.stream(overrides)).collect(Collectors.toList());
         return this;
     }
 
@@ -178,22 +178,15 @@ public class ResourcePackModel {
      * Define texture variables
      * <p>
      */
-    public static class Textures {
-
-        @SerializedName("particle")
-        @Expose
-        private String particle;
-
-        public String getParticle() {
-            return particle;
-        }
-
-        public void setParticle(String particle) {
-            this.particle = particle;
-        }
+    public static class Textures extends HashMap<String, String> {
 
         public Textures withParticle(String particle) {
-            this.particle = particle;
+            put("particle", particle);
+            return this;
+        }
+
+        public Textures with(String texture, String loc) {
+            put(texture, loc);
             return this;
         }
 
@@ -434,49 +427,49 @@ public class ResourcePackModel {
 
             @SerializedName("rotation")
             @Expose
-            private List<Double> rotation = new ArrayList<Double>();
+            private double[] rotation = new double[]{};
             @SerializedName("translation")
             @Expose
-            private List<Double> translation = new ArrayList<Double>();
+            private double[] translation = new double[]{};
             @SerializedName("scale")
             @Expose
-            private List<Double> scale = new ArrayList<Double>();
+            private double[] scale = new double[]{};
 
-            public List<Double> getRotation() {
+            public double[] getRotation() {
                 return rotation;
             }
 
-            public void setRotation(List<Double> rotation) {
+            public void setRotation(double[] rotation) {
                 this.rotation = rotation;
             }
 
-            public ModelTranslation withRotation(List<Double> rotation) {
+            public ModelTranslation withRotation(double... rotation) {
                 this.rotation = rotation;
                 return this;
             }
 
-            public List<Double> getTranslation() {
+            public double[] getTranslation() {
                 return translation;
             }
 
-            public void setTranslation(List<Double> translation) {
+            public void setTranslation(double[] translation) {
                 this.translation = translation;
             }
 
-            public ModelTranslation withTranslation(List<Double> translation) {
+            public ModelTranslation withTranslation(double... translation) {
                 this.translation = translation;
                 return this;
             }
 
-            public List<Double> getScale() {
+            public double[] getScale() {
                 return scale;
             }
 
-            public void setScale(List<Double> scale) {
+            public void setScale(double[] scale) {
                 this.scale = scale;
             }
 
-            public ModelTranslation withScale(List<Double> scale) {
+            public ModelTranslation withScale(double... scale) {
                 this.scale = scale;
                 return this;
             }
@@ -488,10 +481,10 @@ public class ResourcePackModel {
 
         @SerializedName("from")
         @Expose
-        private List<Double> from = new ArrayList<Double>();
+        private double[] from = new double[]{};
         @SerializedName("to")
         @Expose
-        private List<Double> to = new ArrayList<Double>();
+        private double[] to = new double[]{};
         /**
          * The rotation of the element
          * <p>
@@ -514,28 +507,28 @@ public class ResourcePackModel {
         @Expose
         private Faces faces;
 
-        public List<Double> getFrom() {
+        public double[] getFrom() {
             return from;
         }
 
-        public void setFrom(List<Double> from) {
+        public void setFrom(double[] from) {
             this.from = from;
         }
 
-        public ModelElement withFrom(List<Double> from) {
+        public ModelElement withFrom(double[] from) {
             this.from = from;
             return this;
         }
 
-        public List<Double> getTo() {
+        public double[] getTo() {
             return to;
         }
 
-        public void setTo(List<Double> to) {
+        public void setTo(double[] to) {
             this.to = to;
         }
 
-        public ModelElement withTo(List<Double> to) {
+        public ModelElement withTo(double[] to) {
             this.to = to;
             return this;
         }
@@ -611,7 +604,7 @@ public class ResourcePackModel {
 
             @SerializedName("origin")
             @Expose
-            private List<Double> origin = new ArrayList<Double>();
+            private double[] origin = new double[]{};
             /**
              * The direction of rotation
              * <p>
@@ -634,15 +627,15 @@ public class ResourcePackModel {
             @Expose
             private Boolean rescale;
 
-            public List<Double> getOrigin() {
+            public double[] getOrigin() {
                 return origin;
             }
 
-            public void setOrigin(List<Double> origin) {
+            public void setOrigin(double[] origin) {
                 this.origin = origin;
             }
 
-            public Rotation withOrigin(List<Double> origin) {
+            public Rotation withOrigin(double[] origin) {
                 this.origin = origin;
                 return this;
             }
@@ -730,13 +723,13 @@ public class ResourcePackModel {
                     }
                 }
 
-                private final Double value;
+                private final double value;
 
-                private Angle(Double value) {
+                private Angle(double value) {
                     this.value = value;
                 }
 
-                public static Angle fromValue(Double value) {
+                public static Angle fromValue(double value) {
                     Angle constant = CONSTANTS.get(value);
                     if (constant == null) {
                         throw new IllegalArgumentException((value + ""));
@@ -745,7 +738,7 @@ public class ResourcePackModel {
                     }
                 }
 
-                public Double value() {
+                public double value() {
                     return this.value;
                 }
 
@@ -979,7 +972,7 @@ public class ResourcePackModel {
 
             @SerializedName("uv")
             @Expose
-            private List<Double> uv = new ArrayList<Double>();
+            private double[] uv = new double[]{};
             @SerializedName("texture")
             @Expose
             private String texture;
@@ -1008,15 +1001,15 @@ public class ResourcePackModel {
             @Expose
             private Integer tintindex;
 
-            public List<Double> getUv() {
+            public double[] getUv() {
                 return uv;
             }
 
-            public void setUv(List<Double> uv) {
+            public void setUv(double[] uv) {
                 this.uv = uv;
             }
 
-            public FaceProperties withUv(List<Double> uv) {
+            public FaceProperties withUv(double[] uv) {
                 this.uv = uv;
                 return this;
             }
@@ -1241,7 +1234,7 @@ public class ResourcePackModel {
              */
             @SerializedName("angle")
             @Expose
-            private Double angle;
+            private transient double angle;
             /**
              * Used on shields to determine if currently blocking
              * <p>
@@ -1270,7 +1263,7 @@ public class ResourcePackModel {
              */
             @SerializedName("cooldown")
             @Expose
-            private Double cooldown;
+            private transient double cooldown;
             /**
              * Used on items with durability to determine the amount of damage
              * <p>
@@ -1278,7 +1271,7 @@ public class ResourcePackModel {
              */
             @SerializedName("damage")
             @Expose
-            private Double damage;
+            private double damage;
             /**
              * Used on items with durability to determine if it is damaged
              * <p>
@@ -1301,7 +1294,7 @@ public class ResourcePackModel {
              */
             @SerializedName("pull")
             @Expose
-            private Double pull;
+            private transient double pull;
             /**
              * Used on bows to determine if the bow is being pulled
              * <p>
@@ -1323,7 +1316,7 @@ public class ResourcePackModel {
              */
             @SerializedName("time")
             @Expose
-            private Double time;
+            private transient double time;
             /**
              * Used on any item to apply custom model
              * <p>
@@ -1337,7 +1330,7 @@ public class ResourcePackModel {
              * <p>
              * Expressed in a decimal value of less than one
              */
-            public Double getAngle() {
+            public double getAngle() {
                 return angle;
             }
 
@@ -1346,11 +1339,11 @@ public class ResourcePackModel {
              * <p>
              * Expressed in a decimal value of less than one
              */
-            public void setAngle(Double angle) {
+            public void setAngle(double angle) {
                 this.angle = angle;
             }
 
-            public ModelPredicate withAngle(Double angle) {
+            public ModelPredicate withAngle(double angle) {
                 this.angle = angle;
                 return this;
             }
@@ -1423,7 +1416,7 @@ public class ResourcePackModel {
              * <p>
              * Expressed in a decimal value of less than one
              */
-            public Double getCooldown() {
+            public double getCooldown() {
                 return cooldown;
             }
 
@@ -1432,11 +1425,11 @@ public class ResourcePackModel {
              * <p>
              * Expressed in a decimal value of less than one
              */
-            public void setCooldown(Double cooldown) {
+            public void setCooldown(double cooldown) {
                 this.cooldown = cooldown;
             }
 
-            public ModelPredicate withCooldown(Double cooldown) {
+            public ModelPredicate withCooldown(double cooldown) {
                 this.cooldown = cooldown;
                 return this;
             }
@@ -1446,7 +1439,7 @@ public class ResourcePackModel {
              * <p>
              * Expressed in a decimal value of less than one
              */
-            public Double getDamage() {
+            public double getDamage() {
                 return damage;
             }
 
@@ -1455,11 +1448,11 @@ public class ResourcePackModel {
              * <p>
              * Expressed in a decimal value of less than one
              */
-            public void setDamage(Double damage) {
+            public void setDamage(double damage) {
                 this.damage = damage;
             }
 
-            public ModelPredicate withDamage(Double damage) {
+            public ModelPredicate withDamage(double damage) {
                 this.damage = damage;
                 return this;
             }
@@ -1513,7 +1506,7 @@ public class ResourcePackModel {
              * <p>
              * Expressed in a decimal value of less than one
              */
-            public Double getPull() {
+            public double getPull() {
                 return pull;
             }
 
@@ -1522,11 +1515,11 @@ public class ResourcePackModel {
              * <p>
              * Expressed in a decimal value of less than one
              */
-            public void setPull(Double pull) {
+            public void setPull(double pull) {
                 this.pull = pull;
             }
 
-            public ModelPredicate withPull(Double pull) {
+            public ModelPredicate withPull(double pull) {
                 this.pull = pull;
                 return this;
             }
@@ -1578,7 +1571,7 @@ public class ResourcePackModel {
              * <p>
              * Expressed in a decimal value of less than one
              */
-            public Double getTime() {
+            public double getTime() {
                 return time;
             }
 
@@ -1587,11 +1580,11 @@ public class ResourcePackModel {
              * <p>
              * Expressed in a decimal value of less than one
              */
-            public void setTime(Double time) {
+            public void setTime(double time) {
                 this.time = time;
             }
 
-            public ModelPredicate withTime(Double time) {
+            public ModelPredicate withTime(double time) {
                 this.time = time;
                 return this;
             }

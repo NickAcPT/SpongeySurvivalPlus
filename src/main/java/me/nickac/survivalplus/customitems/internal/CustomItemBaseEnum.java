@@ -4,16 +4,20 @@ import org.spongepowered.api.item.ItemType;
 import org.spongepowered.api.item.ItemTypes;
 
 public enum CustomItemBaseEnum {
-    DIAMOND_HOE(1561, ItemTypes.DIAMOND_HOE),
-    DIAMOND_AXE(1561, ItemTypes.DIAMOND_AXE),
-    DIAMOND_PICKAXE(1561, ItemTypes.DIAMOND_PICKAXE);
+    DIAMOND_HOE(1561, ItemTypes.DIAMOND_HOE, "items/diamond_hoe", "item/diamond_hoe"),
+    DIAMOND_AXE(1561, ItemTypes.DIAMOND_AXE, "items/diamond_axe", "item/diamond_axe"),
+    DIAMOND_PICKAXE(1561, ItemTypes.DIAMOND_PICKAXE, "items/diamond_pickaxe", "item/diamond_pickaxe");
 
     private final int maxDamage;
     private final ItemType itemType;
+    private final String modelLoc;
+    private final String textureLoc;
 
-    CustomItemBaseEnum(int maxDamage, ItemType itemType) {
+    CustomItemBaseEnum(int maxDamage, ItemType itemType, String textureLoc, String modelLoc) {
         this.maxDamage = maxDamage;
         this.itemType = itemType;
+        this.textureLoc = textureLoc;
+        this.modelLoc = modelLoc;
     }
 
     public static CustomItemBaseEnum getForCountedItem(int count) {
@@ -32,5 +36,13 @@ public enum CustomItemBaseEnum {
 
     public int getMaxDamage() {
         return maxDamage;
+    }
+
+    public String getModelLoc() {
+        return modelLoc;
+    }
+
+    public String getTextureLoc() {
+        return textureLoc;
     }
 }

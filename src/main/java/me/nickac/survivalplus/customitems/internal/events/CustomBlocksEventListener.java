@@ -30,7 +30,6 @@ public class CustomBlocksEventListener {
             BlockSnapshot blockSnapshot = snapshot.get();
 
             if (itemManager.isManagedBlock(blockSnapshot)) {
-                if (event instanceof InteractBlockEvent.Primary)
                 itemManager.getManagedBlockInfo(blockSnapshot).onBlockInteract(p, event);
             }
 
