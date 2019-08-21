@@ -10,6 +10,7 @@ import org.spongepowered.api.block.BlockState;
 import org.spongepowered.api.block.BlockTypes;
 import org.spongepowered.api.block.tileentity.TileEntity;
 import org.spongepowered.api.data.DataContainer;
+import org.spongepowered.api.data.DataQuery;
 import org.spongepowered.api.data.key.Keys;
 import org.spongepowered.api.entity.EntityArchetype;
 import org.spongepowered.api.entity.EntityTypes;
@@ -33,7 +34,13 @@ public abstract class CustomBlock extends CustomItem {
 
     @Override
     public DataContainer toContainer() {
-        return getInfo().toContainer();
+        final DataContainer view = getInfo().toContainer();
+        final DataContainer info = DataContainer.createNew();
+
+        saveInfo(info);
+        view.set(DataQuery.of("ItemInfo"), info);
+
+        return view;
     }
 
     public final void placeBlock(Location loc, InteractBlockEvent.Secondary event, Player p) {

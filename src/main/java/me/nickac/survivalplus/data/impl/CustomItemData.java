@@ -8,6 +8,7 @@ import me.nickac.survivalplus.managers.CustomItemManager;
 import org.spongepowered.api.Sponge;
 import org.spongepowered.api.data.DataContainer;
 import org.spongepowered.api.data.DataHolder;
+import org.spongepowered.api.data.DataQuery;
 import org.spongepowered.api.data.DataView;
 import org.spongepowered.api.data.manipulator.DataManipulatorBuilder;
 import org.spongepowered.api.data.manipulator.immutable.common.AbstractImmutableSingleData;
@@ -22,7 +23,7 @@ import java.util.Optional;
 
 @SuppressWarnings("NullableProblems")
 public class CustomItemData extends AbstractSingleData<CustomItem, CustomItemData, CustomItemData.Immutable> {
-    protected CustomItemData(CustomItem value) {
+    private CustomItemData(CustomItem value) {
         super(value, CustomKeys.CUSTOM_ITEM_VALUE);
     }
 
@@ -106,13 +107,19 @@ public class CustomItemData extends AbstractSingleData<CustomItem, CustomItemDat
         protected Optional<CustomItemData> buildContent(DataView container) throws InvalidDataException {
             CustomItemData value = create();
             if (container.contains(CustomKeys.CUSTOM_ITEM_VALUE.getQuery())) {
-                int ordinal = ((DataView) container.get(CustomKeys.CUSTOM_ITEM_VALUE.getQuery()).get())
+                final DataView dataView = (DataView) container.get(CustomKeys.CUSTOM_ITEM_VALUE.getQuery()).get();
+                int ordinal = dataView
                         .getInt(CustomItemInformation.Queries.ORDINAL)
                         .orElse(0);
 
                 CustomItemInformation info = itemManager.getRegisteredItemInfoForOrdinal(ordinal);
-                value.setValue(info.createNewInstance());
+                final CustomItem customItem = info.createNewInstance();
+                value.setValue(customItem);
+
+                final DataView blockInfo = (DataView) dataView.get(DataQuery.of("ItemInfo")).get();
+                customItem.loadInfo(blockInfo);
             }
+
             return Optional.of(value);
         }
     }
