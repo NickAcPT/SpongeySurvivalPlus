@@ -17,6 +17,9 @@ dependencies {
     shadow 'org.spongepowered:spongeapi:7.1.0'
     compile "com.sparkjava:spark-core:2.8.0"
     implementation 'com.google.code.gson:gson:2.8.5'
+    compile group: 'org.apache.commons', name: 'commons-compress', version: '1.18'
+
+
 }
 
 shadowJar {

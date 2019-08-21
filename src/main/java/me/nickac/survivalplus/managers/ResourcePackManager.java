@@ -44,11 +44,12 @@ public class ResourcePackManager {
 
         Spark.get(path, (request, response) -> {
             response.type("application/zip");
-            return tryGetResourcePackZip();
+            return packSupplier.get();
         });
-        Spark.get("/survivalplus/pack2.zip", (request, response) -> {
+
+        Spark.get("/direct/" + path, (request, response) -> {
             response.type("application/zip");
-            return container.getAsset("assets.zip").get().readBytes();
+            return tryGetResourcePackZip();
         });
     }
     private byte[] tryGetResourcePackZip() {
@@ -86,8 +87,11 @@ public class ResourcePackManager {
             }
         });
         builder.exitFolder(); //End Models
-        builder.exitFolder();
-        builder.exitFolder();
+
+        builder.injectAssets(container.getSource().get(), "assets/survivalplus/assets-minecraft/");
+
+        builder.exitFolder(); //End Minecraft
+        builder.exitFolder(); //End Assets
         return builder.build();
     }
 
