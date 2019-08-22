@@ -33,7 +33,7 @@ public abstract class CustomBlock extends CustomItem {
     }
 
     @Override
-    public DataContainer toContainer() {
+    public final DataContainer toContainer() {
         final DataContainer view = getInfo().toContainer();
         final DataContainer info = DataContainer.createNew();
 

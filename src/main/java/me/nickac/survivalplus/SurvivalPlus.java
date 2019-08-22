@@ -2,7 +2,7 @@ package me.nickac.survivalplus;
 
 import com.google.inject.Inject;
 import com.google.inject.Injector;
-import me.nickac.survivalplus.customitems.RandomSandBlock;
+import me.nickac.survivalplus.customitems.CoalGeneratorBlock;
 import me.nickac.survivalplus.customitems.internal.events.CustomBlocksEventListener;
 import me.nickac.survivalplus.customitems.internal.info.CustomItemInformation;
 import me.nickac.survivalplus.data.CustomKeys;
@@ -69,10 +69,10 @@ public class SurvivalPlus {
 
     private void registerCustomItems() {
         itemManager.registerItem(CustomItemInformation.builder()
-                .named("Custom Sand")
+                .named("Coal Generator")
                 .ordinal(1)
-                .withModel("base_block.json")
-                .ownedBy(RandomSandBlock.class)
+                .withModel("coal_generator.json")
+                .ownedBy(CoalGeneratorBlock.class)
                 .build());
     }
 
