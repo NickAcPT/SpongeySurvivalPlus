@@ -125,9 +125,6 @@ public class CustomItemInformation implements DataSerializable {
 
     public static class Queries {
         public final static DataQuery ORDINAL = DataQuery.of("Ordinal");
-        public final static DataQuery NAME = DataQuery.of("Name");
-        public final static DataQuery MODEL_ASSET = DataQuery.of("ModelAsset");
-        public final static DataQuery DIRECTIONAL = DataQuery.of("Directional");
         public final static DataQuery ITEM_CLASS = DataQuery.of("ItemClass");
     }
 

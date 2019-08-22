@@ -57,8 +57,8 @@ public class SurvivalPlus {
     @Listener
     public void onGamePreInitialization(GamePreInitializationEvent event) {
         prepareStuff();
-        registerKeys();
         registerCustomItems();
+        registerKeys();
     }
 
     private void prepareStuff() {
