@@ -1,7 +1,9 @@
 package me.nickac.survivalplus.data.impl;
 
+import com.google.inject.Inject;
 import me.nickac.survivalplus.customitems.internal.info.CustomItemInformation;
 import me.nickac.survivalplus.data.CustomKeys;
+import me.nickac.survivalplus.managers.CustomItemManager;
 import org.spongepowered.api.Sponge;
 import org.spongepowered.api.data.DataContainer;
 import org.spongepowered.api.data.DataHolder;
@@ -88,6 +90,9 @@ public class CustomItemInfoData extends AbstractSingleData<CustomItemInformation
             super(CustomItemInfoData.class, 1);
         }
 
+        @Inject
+        private static CustomItemManager itemManager;
+
         @Override
         public CustomItemInfoData create() {
             return new CustomItemInfoData(CustomItemInformation.builder().build());
@@ -101,7 +106,12 @@ public class CustomItemInfoData extends AbstractSingleData<CustomItemInformation
         @Override
         protected Optional<CustomItemInfoData> buildContent(DataView container) throws InvalidDataException {
             CustomItemInfoData info = create();
-            info.getValue().fromView((DataView) container.get(CustomKeys.CUSTOM_ITEM_INFORMATION_VALUE.getQuery()).get());
+
+            final DataView data =
+                    (DataView) container.get(CustomKeys.CUSTOM_ITEM_INFORMATION_VALUE.getQuery()).get();
+            final Integer ordinal = data.getInt(CustomItemInformation.Queries.ORDINAL).orElse(0);
+
+            info.setValue(itemManager.getRegisteredItemInfoForOrdinal(ordinal));
             return Optional.of(info);
         }
     }

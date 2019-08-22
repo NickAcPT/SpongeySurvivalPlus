@@ -3,6 +3,7 @@ package me.nickac.survivalplus;
 import com.google.inject.Inject;
 import com.google.inject.Injector;
 import me.nickac.survivalplus.customitems.CoalGeneratorBlock;
+import me.nickac.survivalplus.customitems.WireBlock;
 import me.nickac.survivalplus.customitems.internal.events.CustomBlocksEventListener;
 import me.nickac.survivalplus.customitems.internal.info.CustomItemInformation;
 import me.nickac.survivalplus.data.CustomKeys;
@@ -71,8 +72,15 @@ public class SurvivalPlus {
         itemManager.registerItem(CustomItemInformation.builder()
                 .named("Coal Generator")
                 .ordinal(1)
+                .directional()
                 .withModel("coal_generator.json")
                 .ownedBy(CoalGeneratorBlock.class)
+                .build());
+        itemManager.registerItem(CustomItemInformation.builder()
+                .named("Wire")
+                .ordinal(2)
+                .withModel("wire.json")
+                .ownedBy(WireBlock.class)
                 .build());
     }
 

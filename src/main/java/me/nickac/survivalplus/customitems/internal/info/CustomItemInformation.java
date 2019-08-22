@@ -10,7 +10,6 @@ import org.spongepowered.api.asset.Asset;
 import org.spongepowered.api.data.DataContainer;
 import org.spongepowered.api.data.DataQuery;
 import org.spongepowered.api.data.DataSerializable;
-import org.spongepowered.api.data.DataView;
 import org.spongepowered.api.item.inventory.ItemStack;
 import org.spongepowered.api.plugin.PluginContainer;
 
@@ -28,15 +27,15 @@ public class CustomItemInformation implements DataSerializable {
     private int ordinal;
     private CustomItemBaseEnum itemBase;
     private String name;
-    private int requiredPower;
+    private boolean directional;
     private String modelAsset;
     private Class<? extends CustomItem> itemClass;
 
-    public CustomItemInformation(int ordinal, String name, int requiredPower, String modelAsset, Class<?
+    public CustomItemInformation(int ordinal, String name, boolean directional, String modelAsset, Class<?
             extends CustomItem> itemClass) {
         this.ordinal = ordinal;
         this.name = name;
-        this.requiredPower = requiredPower;
+        this.directional = directional;
         this.modelAsset = modelAsset;
         this.itemClass = itemClass;
     }
@@ -86,12 +85,12 @@ public class CustomItemInformation implements DataSerializable {
         return itemStack;
     }
 
-    public int getRequiredPower() {
-        return requiredPower;
+    public boolean isDirectional() {
+        return directional;
     }
 
-    public void setRequiredPower(int requiredPower) {
-        this.requiredPower = requiredPower;
+    public void setIsDirectional(boolean directional) {
+        this.directional = directional;
     }
 
     public Asset getModelAsset() {
@@ -118,34 +117,17 @@ public class CustomItemInformation implements DataSerializable {
     @Override
     public DataContainer toContainer() {
         DataContainer container = DataContainer.createNew();
-        if (name != null)
-            container.set(Queries.NAME, name);
-        if (modelAsset != null)
-            container.set(Queries.MODEL_ASSET, modelAsset);
         container.set(Queries.ORDINAL, ordinal);
-        container.set(Queries.REQUIRED_POWER, requiredPower);
         if (itemClass != null)
             container.set(Queries.ITEM_CLASS, itemClass.getName());
         return container;
-    }
-
-    @SuppressWarnings("unchecked")
-    public void fromView(DataView dataView) {
-        setName(dataView.getString(Queries.NAME).orElse(""));
-        setModelAsset(dataView.getString(Queries.MODEL_ASSET).orElse(""));
-        setOrdinal(dataView.getInt(Queries.ORDINAL).orElse(0));
-        setRequiredPower(dataView.getInt(Queries.REQUIRED_POWER).orElse(0));
-        try {
-            itemClass = (Class<? extends CustomItem>) Class.forName(dataView.getString(Queries.ITEM_CLASS).orElse(""));
-        } catch (ClassNotFoundException e) {
-        }
     }
 
     public static class Queries {
         public final static DataQuery ORDINAL = DataQuery.of("Ordinal");
         public final static DataQuery NAME = DataQuery.of("Name");
         public final static DataQuery MODEL_ASSET = DataQuery.of("ModelAsset");
-        public final static DataQuery REQUIRED_POWER = DataQuery.of("RequiredPower");
+        public final static DataQuery DIRECTIONAL = DataQuery.of("Directional");
         public final static DataQuery ITEM_CLASS = DataQuery.of("ItemClass");
     }
 
