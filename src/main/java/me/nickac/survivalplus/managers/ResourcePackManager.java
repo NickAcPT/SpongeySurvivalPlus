@@ -151,7 +151,7 @@ public class ResourcePackManager {
     private ResourcePackModel getCustomBlockModelBaseObject(int headRotation) {
         return new ResourcePackModel().withDisplay(new ResourcePackModel.Display()
                 .withHead(new ResourcePackModel.Display.ModelTranslation()
-                        .withRotation(-30, headRotation, 0)
+                        .withRotation(-30.23, headRotation, 0)
                         .withTranslation(0, -30.75, -7.25)
                         .withScale(3.0125, 3.0125, 3.0125)
                 )

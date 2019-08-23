@@ -87,6 +87,21 @@ public class SurvivalPlus {
                 .withModel("wire.json")
                 .ownedBy(WireBlock.class)
                 .build());
+
+        registerCustomWire("e");
+        registerCustomWire("n");
+        registerCustomWire("ns");
+        registerCustomWire("s");
+        registerCustomWire("w");
+        registerCustomWire("we");
+    }
+
+    private void registerCustomWire(String orientation) {
+        itemManager.registerItem(CustomItemInformation.builder()
+                .named(String.format("Wire (%s)", orientation.toUpperCase()))
+                .withModel(String.format("wire-%s.json", orientation))
+                .ownedBy(WireBlock.class)
+                .build());
     }
 
     private void registerKeys() {
