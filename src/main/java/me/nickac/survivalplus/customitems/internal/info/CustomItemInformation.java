@@ -12,6 +12,10 @@ import org.spongepowered.api.data.DataQuery;
 import org.spongepowered.api.data.DataSerializable;
 import org.spongepowered.api.item.inventory.ItemStack;
 import org.spongepowered.api.plugin.PluginContainer;
+import org.spongepowered.api.util.Direction;
+
+import java.util.HashMap;
+import java.util.Map;
 
 /**
  * Information about the custom item (or block). Not used on the mob spawners
@@ -28,20 +32,37 @@ public class CustomItemInformation implements DataSerializable {
     private CustomItemBaseEnum itemBase;
     private String name;
     private boolean directional;
+    private boolean internal;
     private String modelAsset;
     private Class<? extends CustomItem> itemClass;
+    private Asset customAsset = null;
+    private Map<Direction, CustomItemInformation> directions = new HashMap<>();
 
     public CustomItemInformation(int ordinal, String name, boolean directional, String modelAsset, Class<?
-            extends CustomItem> itemClass) {
+            extends CustomItem> itemClass, boolean internal) {
         this.ordinal = ordinal;
         this.name = name;
         this.directional = directional;
         this.modelAsset = modelAsset;
         this.itemClass = itemClass;
+        this.internal = internal;
+    }
+
+    public void addDirectionalInfo(Direction dir, CustomItemInformation i) {
+        directions.put(dir, i);
+    }
+
+    public CustomItemInformation getDirectionalInfo(Direction dir) {
+        return directions.getOrDefault(dir, this);
     }
 
     public static CustomItemInformationBuilder builder() {
         return injector.getInstance(CustomItemInformationBuilder.class);
+    }
+
+    public CustomItemInformation setCustomAsset(Asset customAsset) {
+        this.customAsset = customAsset;
+        return this;
     }
 
     public Class<? extends CustomItem> getItemClass() {
@@ -79,6 +100,10 @@ public class CustomItemInformation implements DataSerializable {
         return itemBase;
     }
 
+    public boolean isInternal() {
+        return internal;
+    }
+
     public ItemStack getNewItemStack(int amount) {
         ItemStack itemStack = itemManager.generateCustomItemStack(ordinal);
         itemStack.setQuantity(amount);
@@ -94,7 +119,7 @@ public class CustomItemInformation implements DataSerializable {
     }
 
     public Asset getModelAsset() {
-        return plugin.getAsset(modelAsset).orElse(null);
+        return plugin.getAsset(modelAsset).orElse(customAsset);
     }
 
     public void setModelAsset(String modelAsset) {

@@ -1,16 +1,20 @@
 package me.nickac.survivalplus.customitems.internal.info;
 
+import com.google.inject.Inject;
 import me.nickac.survivalplus.customitems.internal.CustomItem;
+import me.nickac.survivalplus.managers.CustomItemManager;
 
 public class CustomItemInformationBuilder {
-    private int ordinal;
+    @Inject
+    private static CustomItemManager itemManager;
     private String name;
     private boolean directional;
     private String modelAsset;
     private Class<? extends CustomItem> itemClass;
+    private boolean internal;
 
-    public CustomItemInformationBuilder ordinal(int ordinal) {
-        this.ordinal = ordinal;
+    public CustomItemInformationBuilder internal() {
+        this.internal = true;
         return this;
     }
 
@@ -30,7 +34,8 @@ public class CustomItemInformationBuilder {
     }
 
     public CustomItemInformation build() {
-        return new CustomItemInformation(ordinal, name, directional, modelAsset, itemClass);
+        return new CustomItemInformation(itemManager.getNextOrdinal(), name, directional, modelAsset, itemClass,
+                internal);
     }
 
     public CustomItemInformationBuilder directional() {

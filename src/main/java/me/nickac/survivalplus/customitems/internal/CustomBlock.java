@@ -2,6 +2,7 @@ package me.nickac.survivalplus.customitems.internal;
 
 import com.flowpowered.math.vector.Vector3d;
 import com.google.inject.Inject;
+import me.nickac.survivalplus.MiscUtils;
 import me.nickac.survivalplus.data.CustomKeys;
 import me.nickac.survivalplus.data.impl.CustomItemData;
 import me.nickac.survivalplus.data.impl.CustomItemInfoData;
@@ -44,6 +45,7 @@ public abstract class CustomBlock extends CustomItem {
     }
 
     public final void placeBlock(Location loc, InteractBlockEvent.Secondary event, Player p) {
+        event.setCancelled(true);
 
         if (!loc.getExtent().getIntersectingEntities(new AABB(loc.getBlockPosition(),
                 loc.getBlockPosition().add(1, 1, 1))).isEmpty()) return;
@@ -51,8 +53,6 @@ public abstract class CustomBlock extends CustomItem {
         loc.setBlock(BlockState.builder()
                 .blockType(BlockTypes.MOB_SPAWNER)
                 .build());
-
-        event.setCancelled(true);
 
         if (!loc.getExtent().getIntersectingEntities(new AABB(loc.getBlockPosition(),
                 loc.getBlockPosition().add(1, 1, 1))).isEmpty()) return;
@@ -69,18 +69,22 @@ public abstract class CustomBlock extends CustomItem {
 
         loc.offer(Keys.SPAWNER_REQUIRED_PLAYER_RANGE, (short) 0);
         loc.offer(Keys.SPAWNER_MAXIMUM_NEARBY_ENTITIES, (short) 0);
-        loc.offer(Keys.SPAWNER_MAXIMUM_DELAY, (short) 0);
-        loc.offer(Keys.SPAWNER_MINIMUM_DELAY, (short) 0);
+        loc.offer(Keys.SPAWNER_MAXIMUM_DELAY, (short)0);
+        loc.offer(Keys.SPAWNER_MINIMUM_DELAY, (short)0);
+        loc.offer(Keys.SPAWNER_REMAINING_DELAY, (short)0);
         loc.offer(Keys.SPAWNER_SPAWN_RANGE, (short) 0);
 
         ArmorStand armorStand = (ArmorStand) loc.getExtent().createEntity(EntityTypes.ARMOR_STAND,
                 loc.getBlockPosition());
+        armorStand.setHeadRotation(Vector3d.ZERO);
         armorStand.setRotation(Vector3d.ZERO);
         armorStand.offer(armorStand.basePlate().set(false));
         armorStand.offer(armorStand.marker().set(true));
         armorStand.setHeadRotation(new Vector3d(0, 0, 0));
         armorStand.offer(Keys.INVISIBLE, true);
-        armorStand.setHelmet(itemManager.generateCustomItemStack(getInfo().getOrdinal()));
+        armorStand.setHelmet(itemManager.generateCustomItemStack(((getInfo().isDirectional() ?
+                getInfo().getDirectionalInfo(MiscUtils.yawToFace((float) p.getHeadRotation().getY()))
+                : getInfo())).getOrdinal()));
 
         WeightedSerializableObject<EntityArchetype> entity =
                 new WeightedSerializableObject<>(EntityArchetype.builder()

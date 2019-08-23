@@ -72,6 +72,10 @@ public class ResourcePackManager {
         builder.enterFolder("block");
 
         builder.add("custom_block.json", getCustomBlockModelBaseObject());
+        builder.add("custom_block-s.json", getCustomBlockModelBaseObject());
+        builder.add("custom_block-n.json", getCustomBlockModelBaseObject(-180));
+        builder.add("custom_block-e.json", getCustomBlockModelBaseObject(90));
+        builder.add("custom_block-w.json", getCustomBlockModelBaseObject(-90));
         itemManager.getRegisteredItems().forEach(i -> {
             try {
                 builder.add(i.getModelAssetRaw(), i.getModelAsset());
@@ -141,9 +145,13 @@ public class ResourcePackManager {
     }
 
     private ResourcePackModel getCustomBlockModelBaseObject() {
+        return getCustomBlockModelBaseObject(0);
+    }
+
+    private ResourcePackModel getCustomBlockModelBaseObject(int headRotation) {
         return new ResourcePackModel().withDisplay(new ResourcePackModel.Display()
                 .withHead(new ResourcePackModel.Display.ModelTranslation()
-                        .withRotation(-30, 0, 0)
+                        .withRotation(-30, headRotation, 0)
                         .withTranslation(0, -30.75, -7.25)
                         .withScale(3.0125, 3.0125, 3.0125)
                 )

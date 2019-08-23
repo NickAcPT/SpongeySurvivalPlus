@@ -18,13 +18,20 @@ import org.spongepowered.api.command.args.GenericArguments;
 import org.spongepowered.api.command.spec.CommandSpec;
 import org.spongepowered.api.config.ConfigDir;
 import org.spongepowered.api.data.DataRegistration;
+import org.spongepowered.api.data.key.Key;
 import org.spongepowered.api.entity.living.player.Player;
 import org.spongepowered.api.event.Listener;
+import org.spongepowered.api.event.game.GameRegistryEvent;
 import org.spongepowered.api.event.game.state.GamePreInitializationEvent;
 import org.spongepowered.api.event.game.state.GameStartedServerEvent;
 import org.spongepowered.api.plugin.Plugin;
 import org.spongepowered.api.plugin.PluginContainer;
+import org.spongepowered.api.text.BookView;
+import org.spongepowered.api.text.LiteralText;
 import org.spongepowered.api.text.Text;
+import org.spongepowered.api.text.action.TextActions;
+import org.spongepowered.api.text.format.TextColors;
+import org.spongepowered.api.text.format.TextStyles;
 
 import java.nio.file.Path;
 
@@ -71,14 +78,12 @@ public class SurvivalPlus {
     private void registerCustomItems() {
         itemManager.registerItem(CustomItemInformation.builder()
                 .named("Coal Generator")
-                .ordinal(1)
                 .directional()
                 .withModel("coal_generator.json")
                 .ownedBy(CoalGeneratorBlock.class)
                 .build());
         itemManager.registerItem(CustomItemInformation.builder()
                 .named("Wire")
-                .ordinal(2)
                 .withModel("wire.json")
                 .ownedBy(WireBlock.class)
                 .build());
@@ -88,20 +93,26 @@ public class SurvivalPlus {
         CustomKeys.dummy();
 
         DataRegistration.builder()
-                .dataName("Managed Type")
-                .manipulatorId("custom_item_information")
+                .name("Managed Type")
+                .id("custom_item_information")
                 .dataClass(CustomItemInfoData.class)
                 .immutableClass(CustomItemInfoData.Immutable.class)
                 .builder(new CustomItemInfoData.Builder())
-                .buildAndRegister(container);
+                .build();
 
         DataRegistration.builder()
-                .dataName("Custom Item")
-                .manipulatorId("custom_item")
+                .name("Custom Item")
+                .id("custom_item")
                 .dataClass(CustomItemData.class)
                 .immutableClass(CustomItemData.Immutable.class)
                 .builder(new CustomItemData.Builder())
-                .buildAndRegister(container);
+                .build();
+    }
+
+    @Listener
+    public void onKeyRegister(GameRegistryEvent.Register<Key<?>> event) {
+        event.register(CustomKeys.CUSTOM_ITEM_VALUE);
+        event.register(CustomKeys.CUSTOM_ITEM_INFORMATION_VALUE);
     }
 
     @Listener
@@ -119,6 +130,30 @@ public class SurvivalPlus {
                     return CommandResult.successCount(count);
                 })
                 .build(), "debugcustomitem");
+
+        Sponge.getCommandManager().register(this, CommandSpec.builder()
+                .executor((src, args) -> {
+                    if (!(src instanceof Player)) return CommandResult.empty();
+
+                    final LiteralText.Builder builder = Text.builder("Click to get custom item:").append(Text.NEW_LINE).append(Text.NEW_LINE);
+
+                    itemManager.getRegisteredItems().stream()
+                            .filter(c -> !c.isInternal())
+                            .forEach(i -> builder.append(Text.builder().append(Text.of(TextColors.BLUE, TextStyles.UNDERLINE, i.getName()))
+                                    .onHover(TextActions.showText(Text.of(TextColors.DARK_GREEN, "ID: ", TextColors.GOLD, i.getOrdinal())))
+                                    .onClick(TextActions.executeCallback(ii ->
+                                            ((Player) src).getInventory().offer(itemManager.generateCustomItemStack(i.getOrdinal())))).build())
+                                    .append(Text.NEW_LINE)
+                            );
+
+                    final BookView book = BookView.builder()
+                            .author(Text.of("NickAc"))
+                            .addPages(
+                                    builder.build()).build();
+                    ((Player) src).sendBookView(book);
+                    return CommandResult.success();
+                })
+                .build(), "customitems");
     }
 
 }
