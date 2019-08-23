@@ -116,8 +116,7 @@ public class CustomItemData extends AbstractSingleData<CustomItem, CustomItemDat
                 final CustomItem customItem = info.createNewInstance();
                 value.setValue(customItem);
 
-                final DataView blockInfo = (DataView) dataView.get(DataQuery.of("ItemInfo")).get();
-                customItem.loadInfo(blockInfo);
+                dataView.get(DataQuery.of("ItemInfo")).ifPresent(customInfo -> customItem.loadInfo((DataView) customInfo));
             }
 
             return Optional.of(value);

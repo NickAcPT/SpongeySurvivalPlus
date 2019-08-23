@@ -100,18 +100,18 @@ public class CustomBlocksEventListener {
         }
     }
 
-/*
+
     @Listener
     public void onChangeBlockBreak(ChangeBlockEvent.Break event, @First Player pl) {
         final BlockSnapshot original = event.getTransactions().get(0).getOriginal();
 
         if (itemManager.isManagedBlock(original)) {
-            event.filterAll();
-            event.setCancelled(true);
-            original.restore(true, BlockChangeFlags.NONE);
+            CustomBlock block = itemManager.getManagedBlockInfo(original);
+            block.forRemoval();
+            block.handleBreak(event, pl);
         }
     }
-*/
+
 
     @Listener
     public void onInteractItem(InteractItemEvent event, @First Player p) {

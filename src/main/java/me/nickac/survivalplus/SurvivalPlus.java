@@ -88,12 +88,25 @@ public class SurvivalPlus {
                 .ownedBy(WireBlock.class)
                 .build());
 
+        registerWires();
+    }
+
+    private void registerWires() {
         registerCustomWire("e");
         registerCustomWire("n");
         registerCustomWire("ns");
         registerCustomWire("s");
         registerCustomWire("w");
         registerCustomWire("we");
+        registerCustomWire("nw");
+        registerCustomWire("se");
+        registerCustomWire("ne");
+        registerCustomWire("nse");
+        registerCustomWire("nsw");
+        registerCustomWire("nwe");
+        registerCustomWire("sw");
+        registerCustomWire("nswe");
+        registerCustomWire("swe");
     }
 
     private void registerCustomWire(String orientation) {
@@ -101,6 +114,7 @@ public class SurvivalPlus {
                 .named(String.format("Wire (%s)", orientation.toUpperCase()))
                 .withModel(String.format("wire-%s.json", orientation))
                 .ownedBy(WireBlock.class)
+                .internal()
                 .build());
     }
 

@@ -34,7 +34,7 @@ public abstract class CustomItem implements DataSerializable {
         return info;
     }
 
-    public final void setInfo(CustomItemInformation info) {
+    public void setInfo(CustomItemInformation info) {
         this.info = info;
     }
     //endregion

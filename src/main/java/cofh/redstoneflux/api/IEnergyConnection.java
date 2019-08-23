@@ -21,4 +21,8 @@ public interface IEnergyConnection {
 	 */
 	boolean canConnectEnergy(Direction from);
 
+    default void updateConnection() {
+
+    }
+
 }

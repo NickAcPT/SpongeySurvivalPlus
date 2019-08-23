@@ -23,10 +23,7 @@ import org.spongepowered.api.util.Direction;
 
 import java.io.IOException;
 import java.nio.charset.StandardCharsets;
-import java.util.Arrays;
-import java.util.Collection;
-import java.util.HashMap;
-import java.util.Map;
+import java.util.*;
 import java.util.concurrent.atomic.AtomicInteger;
 
 @SuppressWarnings("UnstableApiUsage")
@@ -61,7 +58,6 @@ public class CustomItemManager {
                                 .withModel(String.format("%s-side-%s.%s", name, side, ext))
                                 .build();
 
-
                         try {
                             String customModel = info.getModelAsset().readString();
                             customModel = customModel.replace("block/custom_block",
@@ -80,6 +76,10 @@ public class CustomItemManager {
         }
     }
 
+    public Optional<CustomItemInformation> findInfoForAsset(String name) {
+        return registeredItems.values().stream().filter(i -> i.getModelAssetRaw().equals(name)).findFirst();
+    }
+
     public int getNextOrdinal() {
         return ordinalCount.incrementAndGet();
     }
@@ -93,7 +93,7 @@ public class CustomItemManager {
     }
 
     public boolean isManagedBlock(BlockSnapshot block) {
-        return block.get(CustomItemData.Immutable.class).isPresent();
+        return block.get(CustomItemData.Immutable.class).map(i -> !((CustomBlock)i.getValueGetter().get()).isMarkedForRemoval()).orElse(false);
     }
 
     public CustomBlock getManagedBlockInfo(BlockSnapshot block) {
