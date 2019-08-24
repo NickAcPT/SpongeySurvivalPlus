@@ -77,7 +77,7 @@ public class CustomItemManager {
     }
 
     public Optional<CustomItemInformation> findInfoForAsset(String name) {
-        return registeredItems.values().stream().filter(i -> i.getModelAssetRaw().equals(name)).findFirst();
+        return registeredItems.values().stream().filter(i -> i.getModelAssetRaw().endsWith(name)).findFirst();
     }
 
     public int getNextOrdinal() {

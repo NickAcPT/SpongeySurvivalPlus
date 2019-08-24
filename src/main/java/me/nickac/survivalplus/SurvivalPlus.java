@@ -84,7 +84,7 @@ public class SurvivalPlus {
                 .build());
         itemManager.registerItem(CustomItemInformation.builder()
                 .named("Wire")
-                .withModel("wire.json")
+                .withModel("wires/wire.json")
                 .ownedBy(WireBlock.class)
                 .build());
 
@@ -160,7 +160,7 @@ public class SurvivalPlus {
     private void registerCustomWire(String orientation) {
         itemManager.registerItem(CustomItemInformation.builder()
                 .named(String.format("Wire (%s)", orientation.toUpperCase()))
-                .withModel(String.format("wire-%s.json", orientation))
+                .withModel(String.format("wires/wire-%s.json", orientation))
                 .ownedBy(WireBlock.class)
                 .internal()
                 .build());

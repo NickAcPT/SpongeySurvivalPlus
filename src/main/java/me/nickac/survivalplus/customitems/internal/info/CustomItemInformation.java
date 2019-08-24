@@ -130,6 +130,11 @@ public class CustomItemInformation implements DataSerializable {
         return modelAsset;
     }
 
+
+    public String getModelAssetRawFile() {
+        return getModelAssetRaw().substring(Math.max(0, getModelAssetRaw().lastIndexOf('/') + 1));
+    }
+
     public boolean isBlock() {
         return CustomBlock.class.isAssignableFrom(itemClass);
     }

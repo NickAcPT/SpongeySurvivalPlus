@@ -78,7 +78,7 @@ public class ResourcePackManager {
         builder.add("custom_block-w.json", getCustomBlockModelBaseObject(-90));
         itemManager.getRegisteredItems().forEach(i -> {
             try {
-                builder.add(i.getModelAssetRaw(), i.getModelAsset());
+                builder.add(i.getModelAssetRawFile  (), i.getModelAsset());
             } catch (IOException ignored) {
             }
         });
