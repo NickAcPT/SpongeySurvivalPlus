@@ -92,21 +92,69 @@ public class SurvivalPlus {
     }
 
     private void registerWires() {
-        registerCustomWire("e");
         registerCustomWire("n");
-        registerCustomWire("ns");
         registerCustomWire("s");
         registerCustomWire("w");
-        registerCustomWire("we");
+        registerCustomWire("e");
+        registerCustomWire("u");
+        registerCustomWire("d");
+        registerCustomWire("ns");
         registerCustomWire("nw");
-        registerCustomWire("se");
         registerCustomWire("ne");
-        registerCustomWire("nse");
-        registerCustomWire("nsw");
-        registerCustomWire("nwe");
+        registerCustomWire("nu");
+        registerCustomWire("nd");
         registerCustomWire("sw");
-        registerCustomWire("nswe");
+        registerCustomWire("se");
+        registerCustomWire("su");
+        registerCustomWire("sd");
+        registerCustomWire("we");
+        registerCustomWire("wu");
+        registerCustomWire("wd");
+        registerCustomWire("eu");
+        registerCustomWire("ed");
+        registerCustomWire("ud");
+        registerCustomWire("nsw");
+        registerCustomWire("nse");
+        registerCustomWire("nsu");
+        registerCustomWire("nsd");
+        registerCustomWire("nwe");
+        registerCustomWire("nwu");
+        registerCustomWire("nwd");
+        registerCustomWire("neu");
+        registerCustomWire("ned");
+        registerCustomWire("nud");
         registerCustomWire("swe");
+        registerCustomWire("swu");
+        registerCustomWire("swd");
+        registerCustomWire("seu");
+        registerCustomWire("sed");
+        registerCustomWire("sud");
+        registerCustomWire("weu");
+        registerCustomWire("wed");
+        registerCustomWire("wud");
+        registerCustomWire("eud");
+        registerCustomWire("nswe");
+        registerCustomWire("nswu");
+        registerCustomWire("nswd");
+        registerCustomWire("nseu");
+        registerCustomWire("nsed");
+        registerCustomWire("nsud");
+        registerCustomWire("nweu");
+        registerCustomWire("nwed");
+        registerCustomWire("nwud");
+        registerCustomWire("neud");
+        registerCustomWire("sweu");
+        registerCustomWire("swed");
+        registerCustomWire("swud");
+        registerCustomWire("seud");
+        registerCustomWire("weud");
+        registerCustomWire("nsweu");
+        registerCustomWire("nswed");
+        registerCustomWire("nswud");
+        registerCustomWire("nseud");
+        registerCustomWire("nweud");
+        registerCustomWire("sweud");
+        registerCustomWire("nsweud");
     }
 
     private void registerCustomWire(String orientation) {

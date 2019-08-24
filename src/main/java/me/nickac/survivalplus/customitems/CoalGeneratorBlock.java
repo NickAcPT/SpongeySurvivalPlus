@@ -23,6 +23,6 @@ public class CoalGeneratorBlock extends CustomBlock implements IEnergyProvider {
 
     @Override
     public boolean canConnectEnergy(Direction from) {
-        return false;
+        return !from.isUpright();
     }
 }

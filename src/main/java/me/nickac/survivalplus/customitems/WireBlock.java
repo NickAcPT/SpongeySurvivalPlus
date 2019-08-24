@@ -11,10 +11,7 @@ import org.spongepowered.api.world.Location;
 import java.util.function.Consumer;
 
 public class WireBlock extends CustomBlock implements IEnergyConnection {
-    private static final Direction[] blockDirections = new Direction[]{Direction.NORTH, Direction.SOUTH, Direction.WEST,
-            Direction.EAST};
-
-    @Override
+        @Override
     public void onPrePlace(Player player, Consumer<CustomItemInformation> modifyInfo) {
         updateCableState(modifyInfo, true);
     }
@@ -30,7 +27,7 @@ public class WireBlock extends CustomBlock implements IEnergyConnection {
             final BlockSnapshot block = relative.createSnapshot();
             if (getItemManager().isManagedBlock(block)) {
                 final CustomBlock info = getItemManager().getManagedBlockInfo(block);
-                if (info instanceof IEnergyConnection) {
+                if (info instanceof IEnergyConnection && ((IEnergyConnection) info).canConnectEnergy(dir.getOpposite())) {
                     final char c = dir.name().toLowerCase().charAt(0);
                     String sideWires = builder.toString();
                     final String asset = String.format("wire%s.json", !sideWires.isEmpty() ?
@@ -54,7 +51,7 @@ public class WireBlock extends CustomBlock implements IEnergyConnection {
 
     @Override
     public boolean canConnectEnergy(Direction from) {
-        return from.isOrdinal() && !from.isUpright() && !from.isSecondaryOrdinal();
+        return true;
     }
 
     @Override

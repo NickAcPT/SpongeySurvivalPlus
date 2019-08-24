@@ -39,8 +39,8 @@ public abstract class CustomBlock extends CustomItem {
     private static final DataQuery LOC_Y = DataQuery.of("LocY");
     private static final DataQuery LOC_Z = DataQuery.of("LocZ");
     private static final DataQuery LOC_EXT = DataQuery.of("LocExt");
-    private static final Direction[] blockDirections = new Direction[]{Direction.NORTH, Direction.SOUTH, Direction.WEST,
-            Direction.EAST};
+    protected static final Direction[] blockDirections = new Direction[]{Direction.NORTH, Direction.SOUTH, Direction.WEST,
+            Direction.EAST, Direction.UP, Direction.DOWN};
     @Inject
     private static CustomItemManager itemManager;
     private Location<org.spongepowered.api.world.World> location;
