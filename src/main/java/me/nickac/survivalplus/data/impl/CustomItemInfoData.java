@@ -95,7 +95,7 @@ public class CustomItemInfoData extends AbstractSingleData<CustomItemInformation
 
         @Override
         public CustomItemInfoData create() {
-            return new CustomItemInfoData(CustomItemInformation.builder().build());
+            return new CustomItemInfoData(new CustomItemInformation(0, null, false, null, null, false));
         }
 
         @Override
@@ -108,10 +108,19 @@ public class CustomItemInfoData extends AbstractSingleData<CustomItemInformation
             CustomItemInfoData info = create();
 
             final DataView data =
-                    (DataView) container.get(CustomKeys.CUSTOM_ITEM_INFORMATION_VALUE.getQuery()).get();
+                    (DataView) container.get(CustomKeys.CUSTOM_ITEM_INFORMATION_VALUE.getQuery()).orElse(null);
+
+            if (data == null) {
+                info.setValue(new CustomItemInformation(0, null, false, null, null, false));
+                return Optional.of(info);
+            }
             final Integer ordinal = data.getInt(CustomItemInformation.Queries.ORDINAL).orElse(0);
 
-            info.setValue(itemManager.getRegisteredItemInfoForOrdinal(ordinal));
+            try {
+                info.setValue(itemManager.getRegisteredItemInfoForOrdinal(ordinal));
+            } catch (RuntimeException e) {
+                info.setValue(new CustomItemInformation(0, null, false, null, null, false));
+            }
             return Optional.of(info);
         }
     }

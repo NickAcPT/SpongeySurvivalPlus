@@ -147,9 +147,10 @@ public class CustomItemInformation implements DataSerializable {
     @Override
     public DataContainer toContainer() {
         DataContainer container = DataContainer.createNew();
-        container.set(Queries.ORDINAL, ordinal);
-        if (itemClass != null)
+        if (itemClass != null) {
             container.set(Queries.ITEM_CLASS, itemClass.getName());
+            container.set(Queries.ORDINAL, ordinal);
+        }
         return container;
     }
 

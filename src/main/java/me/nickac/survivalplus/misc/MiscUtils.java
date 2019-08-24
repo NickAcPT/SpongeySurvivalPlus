@@ -1,4 +1,4 @@
-package me.nickac.survivalplus;
+package me.nickac.survivalplus.misc;
 
 import org.spongepowered.api.util.Direction;
 

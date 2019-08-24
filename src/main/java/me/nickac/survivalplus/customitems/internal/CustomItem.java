@@ -1,17 +1,22 @@
 package me.nickac.survivalplus.customitems.internal;
 
+import com.google.inject.Inject;
 import me.nickac.survivalplus.customitems.internal.info.CustomItemInformation;
+import me.nickac.survivalplus.managers.CustomItemManager;
 import org.spongepowered.api.data.DataContainer;
 import org.spongepowered.api.data.DataQuery;
 import org.spongepowered.api.data.DataSerializable;
 import org.spongepowered.api.data.DataView;
 import org.spongepowered.api.entity.living.player.Player;
+import org.spongepowered.api.event.block.InteractBlockEvent;
 import org.spongepowered.api.event.item.inventory.InteractItemEvent;
 
 /**
  * Represents a custom item created by SurvivalPlus
  */
 public abstract class CustomItem implements DataSerializable {
+    @Inject
+    protected static CustomItemManager itemManager;
     //region Internal
     public static CustomItem EMPTY = new CustomItem() {
     };
@@ -25,12 +30,13 @@ public abstract class CustomItem implements DataSerializable {
 
     @Override
     public DataContainer toContainer() {
+        final DataContainer finalContainer = getInfo() != null ? getInfo().toContainer() : DataContainer.createNew();
         final DataContainer info = DataContainer.createNew();
         saveInfo(info);
-        return DataContainer.createNew().set(DataQuery.of("ItemInfo"), info);
+        return finalContainer.set(DataQuery.of("ItemInfo"), info);
     }
 
-    CustomItemInformation getInfo() {
+    public CustomItemInformation getInfo() {
         return info;
     }
 
@@ -45,6 +51,13 @@ public abstract class CustomItem implements DataSerializable {
      * @param event The event representing the interaction
      */
     public void onInteract(Player player, InteractItemEvent event) {
+    }
+    /**
+     * Called when a player interacts with this item on a block
+     * @param player The player
+     * @param event The event representing the interaction
+     */
+    public void onInteract(Player player, InteractBlockEvent event) {
     }
 
     /**

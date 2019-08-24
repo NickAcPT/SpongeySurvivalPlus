@@ -2,13 +2,12 @@ package me.nickac.survivalplus.customitems.internal;
 
 import cofh.redstoneflux.api.IEnergyConnection;
 import com.flowpowered.math.vector.Vector3d;
-import com.google.inject.Inject;
-import me.nickac.survivalplus.MiscUtils;
 import me.nickac.survivalplus.customitems.internal.info.CustomItemInformation;
 import me.nickac.survivalplus.data.CustomKeys;
 import me.nickac.survivalplus.data.impl.CustomItemData;
 import me.nickac.survivalplus.data.impl.CustomItemInfoData;
 import me.nickac.survivalplus.managers.CustomItemManager;
+import me.nickac.survivalplus.misc.MiscUtils;
 import org.spongepowered.api.Sponge;
 import org.spongepowered.api.block.BlockSnapshot;
 import org.spongepowered.api.block.BlockState;
@@ -41,8 +40,6 @@ public abstract class CustomBlock extends CustomItem {
     private static final DataQuery LOC_EXT = DataQuery.of("LocExt");
     protected static final Direction[] blockDirections = new Direction[]{Direction.NORTH, Direction.SOUTH, Direction.WEST,
             Direction.EAST, Direction.UP, Direction.DOWN};
-    @Inject
-    private static CustomItemManager itemManager;
     private Location<org.spongepowered.api.world.World> location;
     private boolean markedForRemoval;
 

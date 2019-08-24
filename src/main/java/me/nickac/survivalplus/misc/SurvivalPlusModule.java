@@ -1,4 +1,4 @@
-package me.nickac.survivalplus;
+package me.nickac.survivalplus.misc;
 
 import com.google.inject.AbstractModule;
 import me.nickac.survivalplus.customitems.internal.CustomBlock;

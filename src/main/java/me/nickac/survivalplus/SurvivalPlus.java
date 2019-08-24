@@ -2,7 +2,9 @@ package me.nickac.survivalplus;
 
 import com.google.inject.Inject;
 import com.google.inject.Injector;
+import me.nickac.survivalplus.customitems.BlockDebuggerItem;
 import me.nickac.survivalplus.customitems.CoalGeneratorBlock;
+import me.nickac.survivalplus.customitems.PowerBankBlock;
 import me.nickac.survivalplus.customitems.WireBlock;
 import me.nickac.survivalplus.customitems.internal.events.CustomBlocksEventListener;
 import me.nickac.survivalplus.customitems.internal.info.CustomItemInformation;
@@ -11,6 +13,7 @@ import me.nickac.survivalplus.data.impl.CustomItemData;
 import me.nickac.survivalplus.data.impl.CustomItemInfoData;
 import me.nickac.survivalplus.managers.CustomItemManager;
 import me.nickac.survivalplus.managers.ResourcePackManager;
+import me.nickac.survivalplus.misc.SurvivalPlusModule;
 import org.slf4j.Logger;
 import org.spongepowered.api.Sponge;
 import org.spongepowered.api.command.CommandResult;
@@ -89,6 +92,18 @@ public class SurvivalPlus {
                 .build());
 
         registerWires();
+
+        itemManager.registerItem(CustomItemInformation.builder()
+                .named("Power Bank")
+                .withModel("power_bank.json")
+                .ownedBy(PowerBankBlock.class)
+                .build());
+
+        itemManager.registerItem(CustomItemInformation.builder()
+                .named("Block Debugger")
+                .withModel("block_debugger.json")
+                .ownedBy(BlockDebuggerItem.class)
+                .build());
     }
 
     private void registerWires() {

@@ -5,6 +5,7 @@ import com.google.common.io.Files;
 import com.google.inject.Inject;
 import com.google.inject.Singleton;
 import me.nickac.survivalplus.customitems.internal.CustomBlock;
+import me.nickac.survivalplus.customitems.internal.CustomItem;
 import me.nickac.survivalplus.customitems.internal.CustomItemBaseEnum;
 import me.nickac.survivalplus.customitems.internal.info.CustomItemInformation;
 import me.nickac.survivalplus.data.CustomKeys;
@@ -100,6 +101,10 @@ public class CustomItemManager {
         return (CustomBlock) block.get(CustomItemData.Immutable.class).get().getValueGetter().get();
     }
 
+    public CustomItem getManagedItemInfo(ItemStackSnapshot block) {
+        return block.get(CustomItemData.Immutable.class).get().getValueGetter().get();
+    }
+
     public CustomItemInformation getCustomItemDataFromItem(ItemStackSnapshot item) {
         return item.get(CustomItemInfoData.Immutable.class).get().getValueGetter().get();
     }
@@ -121,6 +126,10 @@ public class CustomItemManager {
         stack.offer(stack.getOrCreate(CustomItemInfoData.class).get());
 
         stack.tryOffer(CustomKeys.CUSTOM_ITEM_INFORMATION_VALUE, info);
+        if (!CustomBlock.class.isAssignableFrom(info.getItemClass())) {
+            stack.offer(stack.getOrCreate(CustomItemData.class).get());
+            stack.tryOffer(CustomKeys.CUSTOM_ITEM_VALUE, info.createNewInstance());
+        }
 
         return stack;
 

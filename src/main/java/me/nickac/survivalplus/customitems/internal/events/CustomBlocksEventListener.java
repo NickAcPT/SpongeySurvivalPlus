@@ -2,6 +2,7 @@ package me.nickac.survivalplus.customitems.internal.events;
 
 import com.google.inject.Inject;
 import me.nickac.survivalplus.customitems.internal.CustomBlock;
+import me.nickac.survivalplus.customitems.internal.CustomItem;
 import me.nickac.survivalplus.customitems.internal.info.CustomItemInformation;
 import me.nickac.survivalplus.managers.CustomItemManager;
 import org.spongepowered.api.block.BlockSnapshot;
@@ -18,6 +19,7 @@ import org.spongepowered.api.event.cause.EventContextKeys;
 import org.spongepowered.api.event.filter.cause.First;
 import org.spongepowered.api.event.filter.cause.Root;
 import org.spongepowered.api.event.item.inventory.InteractItemEvent;
+import org.spongepowered.api.event.sound.PlaySoundEvent;
 import org.spongepowered.api.item.inventory.ItemStackSnapshot;
 import org.spongepowered.api.util.weighted.WeightedTable;
 import org.spongepowered.api.world.Location;
@@ -80,6 +82,22 @@ public class CustomBlocksEventListener {
     }
 
     @Listener
+    public void onCustomItemUse(InteractBlockEvent event, @Root Player p) {
+        Optional<ItemStackSnapshot> item = event.getContext().get(EventContextKeys.USED_ITEM);
+
+        if (!item.isPresent()) return;
+
+        ItemStackSnapshot snapshot = item.get();
+        if (itemManager.isManagedItem(snapshot) && !itemManager.isManagedBlockItem(snapshot)) {
+            CustomItem info = itemManager.getManagedItemInfo(snapshot);
+            if (event instanceof InteractBlockEvent.Secondary)
+                event.setCancelled(true);
+            info.onInteract(p, event);
+        }
+    }
+
+
+    @Listener
     public void onCustomBlockPlace(InteractBlockEvent.Secondary event, @Root Player p) {
         Optional<ItemStackSnapshot> item = event.getContext().get(EventContextKeys.USED_ITEM);
 
@@ -100,6 +118,13 @@ public class CustomBlocksEventListener {
         }
     }
 
+    @Listener
+    public void onPlaySound(PlaySoundEvent event) {
+        final ItemStackSnapshot item = event.getContext().get(EventContextKeys.USED_ITEM).orElse(null);
+        if (item != null && itemManager.isManagedItem(item) && event.getSoundType().equals(SoundTypes.ITEM_ARMOR_EQUIP_GENERIC)) {
+            event.setCancelled(true);
+        }
+    }
 
     @Listener
     public void onChangeBlockBreak(ChangeBlockEvent.Break event, @First Player pl) {
@@ -114,9 +139,11 @@ public class CustomBlocksEventListener {
 
 
     @Listener
-    public void onInteractItem(InteractItemEvent event, @First Player p) {
+    public void onInteractItem(InteractItemEvent.Secondary event, @First Player p) {
         if (itemManager.isManagedItem(event.getItemStack())) {
+            final CustomItem item = itemManager.getManagedItemInfo(event.getItemStack());
             event.setCancelled(true);
+            if (item != null) item.onInteract(p, event);
         }
     }
 }
