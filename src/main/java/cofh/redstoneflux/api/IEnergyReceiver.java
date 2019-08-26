@@ -20,4 +20,7 @@ public interface IEnergyReceiver extends IEnergyHandler {
 	 */
 	int receiveEnergy(int maxReceive, boolean simulate);
 
+	default boolean canReceiveEnergy() {
+		return true;
+	}
 }

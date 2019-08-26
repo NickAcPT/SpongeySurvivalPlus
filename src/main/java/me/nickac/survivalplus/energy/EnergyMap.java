@@ -1,6 +1,6 @@
 package me.nickac.survivalplus.energy;
 
-import cofh.redstoneflux.api.IEnergyReceiver;
+import cofh.redstoneflux.api.IEnergyProvider;
 import com.google.inject.Inject;
 import com.google.inject.Singleton;
 import me.nickac.survivalplus.customitems.internal.CustomBlock;
@@ -29,9 +29,10 @@ public class EnergyMap {
                     if (block instanceof ITickableBlock)
                         ((ITickableBlock) block).tick();
 
-                    if (block instanceof IEnergyReceiver) {
-                        final IEnergyReceiver receiver = (IEnergyReceiver) block;
-                        circuit.powerReceiver(receiver);
+                    if (block instanceof IEnergyProvider) {
+                        IEnergyProvider provider = (IEnergyProvider) block;
+                        if (provider.canProvideEnergy())
+                            circuit.powerReceivers(provider);
                     }
                 }
             }

@@ -33,7 +33,7 @@ public class BlockDebuggerItem extends CustomItem {
             final CustomItemInformation itemInfo = info.getInfo();
             if (info instanceof IEnergyHandler) {
                 texts.add(
-                        Text.of(TextColors.GOLD, "Stored Energy: ", ((IEnergyHandler) info).getEnergyStored(), " RF"));
+                        Text.of(TextColors.GOLD, "Stored Energy: ", TextColors.GREEN, ((IEnergyHandler) info).getEnergyStored(), " RF"));
             }
 
             final Optional<EnergyCircuit> circuit = energyMap.getCircuitOfBlock(info);
@@ -52,10 +52,10 @@ public class BlockDebuggerItem extends CustomItem {
             texts.add(Text.of(TextColors.GOLD, "Class Name: ", TextColors.GREEN, info.getClass().getSimpleName()));
             texts.add(Text.of(TextColors.GOLD, "Model Name: ", TextColors.GREEN, itemInfo.getModelAssetRaw()));
 
+            for (int i = 0; i < 15; i++) player.sendMessage(Text.EMPTY);
 
             PaginationList.builder().title(Text.of("SurvivalPlus - Block Debugger"))
                     .contents(texts)
-                    .linesPerPage(7)
                     .padding(Text.of("-"))
                     .sendTo(player);
 

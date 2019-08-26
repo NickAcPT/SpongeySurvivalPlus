@@ -35,19 +35,25 @@ public class EnergyCircuit {
         return getEnergyProviders().stream().map(c -> ((IEnergyProvider) c).getEnergyStored()).mapToInt(c -> c).sum();
     }
 
-    public void powerReceiver(IEnergyReceiver receiver) {
-        final int maxEnergy = getStoredEnergy() / getEnergyReceivers().size();
-        for (CustomBlock b : getEnergyProviders()) {
-            if (b != receiver) {
-                IEnergyProvider iEnergyProvider = ((IEnergyProvider) b);
+    public void powerReceivers(IEnergyProvider provider) {
+        final List<IEnergyReceiver> receivers = this.getEnergyReceivers();
+        if (receivers.size() <= 0) return;
+
+        final int maxEnergy = provider.getEnergyStored() / receivers.size();
+        for (IEnergyReceiver b : receivers) {
+            if (!b.canReceiveEnergy()) continue;
+            if (b != provider) {
                 final int sent =
-                        receiver.receiveEnergy(iEnergyProvider.extractEnergy(Math.min(maxEnergy, iEnergyProvider.getEnergyStored()), true)
-                                , true);
+                        b.receiveEnergy(
+                                provider.extractEnergy(
+                                        Math.min(maxEnergy, provider.getEnergyStored())
+                                        , true
+                                ),
+                                true);
                 if (sent > 0) {
-                    iEnergyProvider.extractEnergy(sent, false);
-                    receiver.receiveEnergy(sent, false);
+                    provider.extractEnergy(sent, false);
+                    b.receiveEnergy(sent, false);
                 }
-                break;
             }
         }
     }
@@ -58,8 +64,11 @@ public class EnergyCircuit {
                 .collect(Collectors.toList());
     }
 
-    public List<CustomBlock> getEnergyReceivers() {
+    public <T> List<T> getEnergyReceivers() {
         return blocks.stream().filter(b -> b instanceof IEnergyReceiver)
+                .filter(b -> ((IEnergyReceiver) b).canReceiveEnergy())
+                .map(b -> (T) b)
+                .sorted(Comparator.comparing(b -> ((IEnergyReceiver)b).getEnergyStored()))
                 .collect(Collectors.toList());
     }
 

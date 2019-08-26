@@ -1,6 +1,8 @@
 package me.nickac.survivalplus.customitems;
 
 import cofh.redstoneflux.api.IEnergyHandler;
+import cofh.redstoneflux.api.IEnergyProvider;
+import cofh.redstoneflux.api.IEnergyReceiver;
 import com.google.inject.Inject;
 import me.nickac.survivalplus.customitems.internal.CustomBlock;
 import me.nickac.survivalplus.customitems.internal.CustomItem;
@@ -47,7 +49,8 @@ public class EnergyMapInspectorItem extends CustomItem {
         if (sneaking) {
             useMode = getNextMode(useMode);
         }
-        player.sendMessage(ChatTypes.ACTION_BAR, Text.of(TextColors.GOLD, TextStyles.BOLD, sneaking ? "Changed highlight mode to: " : "Current highlight mode: ",
+        player.sendMessage(ChatTypes.ACTION_BAR, Text.of(TextColors.GOLD, TextStyles.BOLD, sneaking ? "Changed " +
+                        "highlight mode to: " : "Current highlight mode: ",
                 TextColors.GREEN, TextStyles.UNDERLINE, useMode.getDescription()));
         event.setCancelled(true);
     }
@@ -97,7 +100,10 @@ public class EnergyMapInspectorItem extends CustomItem {
     enum Modes {
         ALL("All", block -> true),
         CABLES_ONLY("Show Wires", block -> block instanceof WireBlock),
-        MACHINE_BLOCKS("Machine Blocks", block -> block instanceof IEnergyHandler && !(block instanceof WireBlock));
+        MACHINE_BLOCKS("Machine Blocks", block -> block instanceof IEnergyHandler && !(block instanceof WireBlock)),
+        ENERGY_PROVIDERS("Energy Providers", block -> block instanceof IEnergyProvider),
+        ENERGY_RECEIVERS("Energy Receivers", block -> block instanceof IEnergyReceiver)/*,
+        ENERGY_CONNECTIONS("Energy Connections", block -> block instanceof IEnergyConnection)*/;
 
         private final String description;
         private final Predicate<? super CustomBlock> predicate;

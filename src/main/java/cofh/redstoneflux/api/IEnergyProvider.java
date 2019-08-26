@@ -20,4 +20,8 @@ public interface IEnergyProvider extends IEnergyHandler {
 	 */
 	int extractEnergy(int maxExtract, boolean simulate);
 
+	default boolean canProvideEnergy() {
+		return true;
+	}
+
 }
