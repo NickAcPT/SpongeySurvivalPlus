@@ -1,10 +1,13 @@
-package me.nickac.survivalplus.data.impl;
+package me.nickac.survivalplus.misc.data.impl;
 
+import cofh.redstoneflux.api.IEnergyConnection;
 import com.google.inject.Inject;
+import me.nickac.survivalplus.customitems.internal.CustomBlock;
 import me.nickac.survivalplus.customitems.internal.CustomItem;
 import me.nickac.survivalplus.customitems.internal.info.CustomItemInformation;
-import me.nickac.survivalplus.data.CustomKeys;
+import me.nickac.survivalplus.energy.EnergyMap;
 import me.nickac.survivalplus.managers.CustomItemManager;
+import me.nickac.survivalplus.misc.data.CustomKeys;
 import org.spongepowered.api.Sponge;
 import org.spongepowered.api.data.DataContainer;
 import org.spongepowered.api.data.DataHolder;
@@ -89,6 +92,9 @@ public class CustomItemData extends AbstractSingleData<CustomItem, CustomItemDat
         @Inject
         private static CustomItemManager itemManager;
 
+        @Inject
+        private static EnergyMap energyMap;
+
         public Builder() {
             super(CustomItemData.class, 1);
         }
@@ -117,6 +123,10 @@ public class CustomItemData extends AbstractSingleData<CustomItem, CustomItemDat
                 value.setValue(customItem);
 
                 dataView.get(DataQuery.of("ItemInfo")).ifPresent(customInfo -> customItem.loadInfo((DataView) customInfo));
+
+                if (customItem instanceof CustomBlock && customItem instanceof IEnergyConnection) {
+                    energyMap.queueBlock((CustomBlock) customItem);
+                }
             }
 
             return Optional.of(value);

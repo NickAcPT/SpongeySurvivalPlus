@@ -1,8 +1,8 @@
-package me.nickac.survivalplus.data.impl;
+package me.nickac.survivalplus.misc.data.impl;
 
 import com.google.inject.Inject;
 import me.nickac.survivalplus.customitems.internal.info.CustomItemInformation;
-import me.nickac.survivalplus.data.CustomKeys;
+import me.nickac.survivalplus.misc.data.CustomKeys;
 import me.nickac.survivalplus.managers.CustomItemManager;
 import org.spongepowered.api.Sponge;
 import org.spongepowered.api.data.DataContainer;

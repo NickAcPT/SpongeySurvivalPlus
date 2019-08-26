@@ -1,4 +1,4 @@
-package me.nickac.survivalplus.model;
+package me.nickac.survivalplus.misc.model;
 
 import org.spongepowered.api.asset.Asset;
 import org.spongepowered.api.plugin.PluginContainer;

@@ -4,7 +4,7 @@ import com.google.gson.Gson;
 import com.google.gson.GsonBuilder;
 import com.google.gson.JsonPrimitive;
 import com.google.gson.JsonSerializer;
-import me.nickac.survivalplus.model.ResourcePackModel;
+import me.nickac.survivalplus.misc.model.ResourcePackModel;
 import org.apache.commons.compress.archivers.zip.ZipArchiveEntry;
 import org.apache.commons.compress.archivers.zip.ZipArchiveInputStream;
 import org.apache.commons.compress.archivers.zip.ZipArchiveOutputStream;

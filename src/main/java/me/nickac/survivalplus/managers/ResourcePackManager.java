@@ -5,8 +5,8 @@ import com.google.common.io.Files;
 import com.google.inject.Inject;
 import com.google.inject.Singleton;
 import me.nickac.survivalplus.customitems.internal.CustomItemBaseEnum;
-import me.nickac.survivalplus.model.ResourcePackMeta;
-import me.nickac.survivalplus.model.ResourcePackModel;
+import me.nickac.survivalplus.misc.model.ResourcePackMeta;
+import me.nickac.survivalplus.misc.model.ResourcePackModel;
 import org.spongepowered.api.Sponge;
 import org.spongepowered.api.event.Listener;
 import org.spongepowered.api.event.network.ClientConnectionEvent;
@@ -23,8 +23,8 @@ import java.util.Arrays;
 import java.util.concurrent.TimeUnit;
 import java.util.function.Supplier;
 
-import static me.nickac.survivalplus.model.ResourcePackModel.ModelOverride.ModelPredicate.Damaged._0;
-import static me.nickac.survivalplus.model.ResourcePackModel.ModelOverride.ModelPredicate.Damaged._1;
+import static me.nickac.survivalplus.misc.model.ResourcePackModel.ModelOverride.ModelPredicate.Damaged._0;
+import static me.nickac.survivalplus.misc.model.ResourcePackModel.ModelOverride.ModelPredicate.Damaged._1;
 
 @SuppressWarnings("UnstableApiUsage")
 @Singleton

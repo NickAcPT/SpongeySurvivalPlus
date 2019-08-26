@@ -140,7 +140,7 @@ public class CustomBlocksEventListener {
 
     @Listener
     public void onInteractItem(InteractItemEvent.Secondary event, @First Player p) {
-        if (itemManager.isManagedItem(event.getItemStack())) {
+        if (itemManager.isManagedItem(event.getItemStack()) && !itemManager.isManagedBlockItem(event.getItemStack())) {
             final CustomItem item = itemManager.getManagedItemInfo(event.getItemStack());
             event.setCancelled(true);
             if (item != null) item.onInteract(p, event);

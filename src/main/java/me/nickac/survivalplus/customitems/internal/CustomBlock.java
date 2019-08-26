@@ -2,12 +2,14 @@ package me.nickac.survivalplus.customitems.internal;
 
 import cofh.redstoneflux.api.IEnergyConnection;
 import com.flowpowered.math.vector.Vector3d;
+import com.google.inject.Inject;
 import me.nickac.survivalplus.customitems.internal.info.CustomItemInformation;
-import me.nickac.survivalplus.data.CustomKeys;
-import me.nickac.survivalplus.data.impl.CustomItemData;
-import me.nickac.survivalplus.data.impl.CustomItemInfoData;
+import me.nickac.survivalplus.energy.EnergyMap;
 import me.nickac.survivalplus.managers.CustomItemManager;
 import me.nickac.survivalplus.misc.MiscUtils;
+import me.nickac.survivalplus.misc.data.CustomKeys;
+import me.nickac.survivalplus.misc.data.impl.CustomItemData;
+import me.nickac.survivalplus.misc.data.impl.CustomItemInfoData;
 import org.spongepowered.api.Sponge;
 import org.spongepowered.api.block.BlockSnapshot;
 import org.spongepowered.api.block.BlockState;
@@ -34,14 +36,22 @@ import java.util.UUID;
 import java.util.function.Consumer;
 
 public abstract class CustomBlock extends CustomItem {
+    protected static final Direction[] ENERGY_SIDE_DIRECTIONS = new Direction[]{Direction.NORTH, Direction.SOUTH,
+            Direction.WEST,
+            Direction.EAST, Direction.UP, Direction.DOWN};
     private static final DataQuery LOC_X = DataQuery.of("LocX");
     private static final DataQuery LOC_Y = DataQuery.of("LocY");
     private static final DataQuery LOC_Z = DataQuery.of("LocZ");
     private static final DataQuery LOC_EXT = DataQuery.of("LocExt");
-    protected static final Direction[] blockDirections = new Direction[]{Direction.NORTH, Direction.SOUTH, Direction.WEST,
-            Direction.EAST, Direction.UP, Direction.DOWN};
-    private Location<org.spongepowered.api.world.World> location;
+    private Location<World> location;
     private boolean markedForRemoval;
+
+    @Inject
+    private static EnergyMap energyMap;
+
+    public static Direction[] getEnergySideDirections() {
+        return ENERGY_SIDE_DIRECTIONS;
+    }
 
     public boolean isMarkedForRemoval() {
         return markedForRemoval;
@@ -51,7 +61,7 @@ public abstract class CustomBlock extends CustomItem {
         markedForRemoval = true;
     }
 
-    protected Location<org.spongepowered.api.world.World> getLocation() {
+    public Location<World> getLocation() {
         return location;
     }
 
@@ -168,10 +178,14 @@ public abstract class CustomBlock extends CustomItem {
 
         onPlace(p);
         updateBlocksAround();
+
+        if (IEnergyConnection.class.isAssignableFrom(getClass())) {
+            energyMap.recursiveCreateNewCircuit(this);
+        }
     }
 
     private void updateBlocksAround() {
-        for (Direction dir : blockDirections) {
+        for (Direction dir : ENERGY_SIDE_DIRECTIONS) {
             final Location relative = getLocation().getBlockRelative(dir.getOpposite());
             final BlockSnapshot block = relative.createSnapshot();
             if (getItemManager().isManagedBlock(block)) {
@@ -204,5 +218,9 @@ public abstract class CustomBlock extends CustomItem {
     public final void handleBreak(ChangeBlockEvent.Break event, Player p) {
         onBreak(event, p);
         updateBlocksAround();
+
+        if (IEnergyConnection.class.isAssignableFrom(getClass())) {
+            energyMap.removeFromAnyCircuit(this);
+        }
     }
 }

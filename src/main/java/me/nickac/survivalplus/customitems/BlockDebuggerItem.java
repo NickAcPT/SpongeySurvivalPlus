@@ -1,9 +1,12 @@
 package me.nickac.survivalplus.customitems;
 
 import cofh.redstoneflux.api.IEnergyHandler;
+import com.google.inject.Inject;
 import me.nickac.survivalplus.customitems.internal.CustomBlock;
 import me.nickac.survivalplus.customitems.internal.CustomItem;
 import me.nickac.survivalplus.customitems.internal.info.CustomItemInformation;
+import me.nickac.survivalplus.energy.EnergyCircuit;
+import me.nickac.survivalplus.energy.EnergyMap;
 import org.spongepowered.api.block.BlockSnapshot;
 import org.spongepowered.api.entity.living.player.Player;
 import org.spongepowered.api.event.block.InteractBlockEvent;
@@ -17,9 +20,13 @@ import org.spongepowered.api.util.Direction;
 import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.List;
+import java.util.Optional;
 import java.util.stream.Collectors;
 
 public class BlockDebuggerItem extends CustomItem {
+
+    @Inject
+    private static EnergyMap energyMap;
 
     @Override
     public void onInteract(Player player, InteractBlockEvent event) {
@@ -34,7 +41,6 @@ public class BlockDebuggerItem extends CustomItem {
             texts.add(Text.of(TextColors.GOLD, "Class Name: ", TextColors.GREEN, info.getClass().getSimpleName()));
             texts.add(Text.of(TextColors.GOLD, "Model Name: ", TextColors.GREEN, itemInfo.getModelAssetRaw()));
             if (info instanceof IEnergyHandler) {
-
                 texts.add(Text.of(TextColors.GOLD, "Stored Energy: ",
                         Text
                                 .builder("Click to read values")
@@ -54,6 +60,13 @@ public class BlockDebuggerItem extends CustomItem {
                                 }))
                         )
                 );
+            }
+
+            final Optional<EnergyCircuit> circuit = energyMap.getCircuitOfBlock(info);
+            if (circuit.isPresent()) {
+                final EnergyCircuit energyCircuit = circuit.get();
+                texts.add(Text.of(TextColors.GOLD, "Energy Circuit ID: ", TextColors.GREEN, energyCircuit.getCircuitId()));
+                texts.add(Text.of(TextColors.GOLD, "Block Count on Circuit: ", TextColors.GREEN, energyCircuit.getBlocks().size()));
             }
 
             PaginationList.builder().title(Text.of("SurvivalPlus - Block Debugger"))

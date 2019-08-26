@@ -1,4 +1,4 @@
-package me.nickac.survivalplus.model;
+package me.nickac.survivalplus.misc.model;
 
 import com.google.common.collect.Streams;
 import com.google.gson.annotations.Expose;

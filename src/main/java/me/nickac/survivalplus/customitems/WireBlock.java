@@ -22,7 +22,7 @@ public class WireBlock extends CustomBlock implements IEnergyConnection {
             return;
         }
         StringBuilder builder = new StringBuilder();
-        for (Direction dir : blockDirections) {
+        for (Direction dir : ENERGY_SIDE_DIRECTIONS) {
             final Location relative = getLocation().getBlockRelative(dir.getOpposite());
             final BlockSnapshot block = relative.createSnapshot();
             if (getItemManager().isManagedBlock(block)) {

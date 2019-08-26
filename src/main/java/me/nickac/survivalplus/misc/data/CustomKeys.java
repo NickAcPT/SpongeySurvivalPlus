@@ -1,4 +1,4 @@
-package me.nickac.survivalplus.data;
+package me.nickac.survivalplus.misc.data;
 
 import com.google.common.reflect.TypeToken;
 import me.nickac.survivalplus.customitems.internal.CustomItem;

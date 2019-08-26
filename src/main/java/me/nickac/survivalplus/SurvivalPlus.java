@@ -8,16 +8,16 @@ import me.nickac.survivalplus.customitems.PowerBankBlock;
 import me.nickac.survivalplus.customitems.WireBlock;
 import me.nickac.survivalplus.customitems.internal.events.CustomBlocksEventListener;
 import me.nickac.survivalplus.customitems.internal.info.CustomItemInformation;
-import me.nickac.survivalplus.data.CustomKeys;
-import me.nickac.survivalplus.data.impl.CustomItemData;
-import me.nickac.survivalplus.data.impl.CustomItemInfoData;
+import me.nickac.survivalplus.energy.EnergyMap;
 import me.nickac.survivalplus.managers.CustomItemManager;
 import me.nickac.survivalplus.managers.ResourcePackManager;
 import me.nickac.survivalplus.misc.SurvivalPlusModule;
+import me.nickac.survivalplus.misc.data.CustomKeys;
+import me.nickac.survivalplus.misc.data.impl.CustomItemData;
+import me.nickac.survivalplus.misc.data.impl.CustomItemInfoData;
 import org.slf4j.Logger;
 import org.spongepowered.api.Sponge;
 import org.spongepowered.api.command.CommandResult;
-import org.spongepowered.api.command.args.GenericArguments;
 import org.spongepowered.api.command.spec.CommandSpec;
 import org.spongepowered.api.config.ConfigDir;
 import org.spongepowered.api.data.DataRegistration;
@@ -27,8 +27,10 @@ import org.spongepowered.api.event.Listener;
 import org.spongepowered.api.event.game.GameRegistryEvent;
 import org.spongepowered.api.event.game.state.GamePreInitializationEvent;
 import org.spongepowered.api.event.game.state.GameStartedServerEvent;
+import org.spongepowered.api.event.world.chunk.LoadChunkEvent;
 import org.spongepowered.api.plugin.Plugin;
 import org.spongepowered.api.plugin.PluginContainer;
+import org.spongepowered.api.service.pagination.PaginationList;
 import org.spongepowered.api.text.BookView;
 import org.spongepowered.api.text.LiteralText;
 import org.spongepowered.api.text.Text;
@@ -56,6 +58,7 @@ public class SurvivalPlus {
     private Path pluginPath;
 
     private CustomItemManager itemManager;
+    private EnergyMap energyMap;
     private ResourcePackManager resourcePackManager;
 
     @Inject
@@ -74,6 +77,7 @@ public class SurvivalPlus {
     private void prepareStuff() {
         injector = injector.createChildInjector(new SurvivalPlusModule());
         itemManager = injector.getInstance(CustomItemManager.class);
+        energyMap = injector.getInstance(EnergyMap.class);
         Sponge.getEventManager()
                 .registerListeners(this, resourcePackManager = injector.getInstance(ResourcePackManager.class));
     }
@@ -202,6 +206,11 @@ public class SurvivalPlus {
     }
 
     @Listener
+    public void onLoadChunk(LoadChunkEvent event) {
+        energyMap.processQueuedBlocks();
+    }
+
+    @Listener
     public void onKeyRegister(GameRegistryEvent.Register<Key<?>> event) {
         event.register(CustomKeys.CUSTOM_ITEM_VALUE);
         event.register(CustomKeys.CUSTOM_ITEM_INFORMATION_VALUE);
@@ -211,28 +220,18 @@ public class SurvivalPlus {
     public void onServerStart(GameStartedServerEvent event) {
         Sponge.getEventManager().registerListeners(this, customBlocksEventListener);
         Sponge.getCommandManager().register(this, CommandSpec.builder()
-                .arguments(GenericArguments.integer(Text.of("count")))
-                .executor((src, args) -> {
-                    int count = args.<Integer>getOne(Text.of("count")).orElse(0);
-
-                    if (src instanceof Player) {
-                        ((Player) src).getInventory().offer(itemManager.generateCustomItemStack(count));
-                    }
-
-                    return CommandResult.successCount(count);
-                })
-                .build(), "debugcustomitem");
-
-        Sponge.getCommandManager().register(this, CommandSpec.builder()
                 .executor((src, args) -> {
                     if (!(src instanceof Player)) return CommandResult.empty();
 
-                    final LiteralText.Builder builder = Text.builder("Click to get custom item:").append(Text.NEW_LINE).append(Text.NEW_LINE);
+                    final LiteralText.Builder builder =
+                            Text.builder("Click to get custom item:").append(Text.NEW_LINE).append(Text.NEW_LINE);
 
                     itemManager.getRegisteredItems().stream()
                             .filter(c -> !c.isInternal())
-                            .forEach(i -> builder.append(Text.builder().append(Text.of(TextColors.BLUE, TextStyles.UNDERLINE, i.getName()))
-                                    .onHover(TextActions.showText(Text.of(TextColors.DARK_GREEN, "ID: ", TextColors.GOLD, i.getOrdinal())))
+                            .forEach(i -> builder.append(Text.builder().append(Text.of(TextColors.BLUE,
+                                    TextStyles.UNDERLINE, i.getName()))
+                                    .onHover(TextActions.showText(Text.of(TextColors.DARK_GREEN, "ID: ",
+                                            TextColors.GOLD, i.getOrdinal())))
                                     .onClick(TextActions.executeCallback(ii ->
                                             ((Player) src).getInventory().offer(itemManager.generateCustomItemStack(i.getOrdinal())))).build())
                                     .append(Text.NEW_LINE)
@@ -246,6 +245,24 @@ public class SurvivalPlus {
                     return CommandResult.success();
                 })
                 .build(), "customitems");
+
+        Sponge.getCommandManager().register(this, CommandSpec.builder()
+                .executor((src, args) -> {
+                    if (!(src instanceof Player)) return CommandResult.empty();
+
+                    PaginationList.builder()
+                            .contents(energyMap.getCircuits().stream().map(circuit -> {
+                                return Text.builder("Circuit ID: ").color(TextColors.GOLD)
+                                        .append(Text.of(TextColors.DARK_GREEN, circuit.getCircuitId().toString()))
+                                        .build();
+                            }).toArray(Text[]::new))
+                            .title(Text.of("SurvivalPlus - Energy Map"))
+                            .padding(Text.of("="))
+                            .sendTo(src);
+
+                    return CommandResult.success();
+                })
+                .build(), "energymap", "circuitmap");
     }
 
 }
