@@ -2,6 +2,7 @@ package me.nickac.survivalplus.misc;
 
 import com.google.inject.AbstractModule;
 import me.nickac.survivalplus.customitems.BlockDebuggerItem;
+import me.nickac.survivalplus.customitems.EnergyMapInspectorItem;
 import me.nickac.survivalplus.customitems.internal.CustomBlock;
 import me.nickac.survivalplus.customitems.internal.CustomItem;
 import me.nickac.survivalplus.customitems.internal.info.CustomItemInformation;
@@ -20,5 +21,6 @@ public class SurvivalPlusModule extends AbstractModule {
         requestStaticInjection(CustomItemInfoData.Builder.class);
         requestStaticInjection(CustomItemInformationBuilder.class);
         requestStaticInjection(BlockDebuggerItem.class);
+        requestStaticInjection(EnergyMapInspectorItem.class);
     }
 }

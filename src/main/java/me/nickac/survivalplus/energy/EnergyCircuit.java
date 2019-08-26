@@ -1,5 +1,7 @@
 package me.nickac.survivalplus.energy;
 
+import cofh.redstoneflux.api.IEnergyProvider;
+import cofh.redstoneflux.api.IEnergyReceiver;
 import com.google.inject.Inject;
 import me.nickac.survivalplus.customitems.internal.CustomBlock;
 import me.nickac.survivalplus.managers.CustomItemManager;
@@ -8,10 +10,8 @@ import org.spongepowered.api.util.Direction;
 import org.spongepowered.api.world.Location;
 import org.spongepowered.api.world.World;
 
-import java.util.ArrayList;
-import java.util.List;
-import java.util.Objects;
-import java.util.UUID;
+import java.util.*;
+import java.util.stream.Collectors;
 
 public class EnergyCircuit {
     @Inject
@@ -31,13 +31,45 @@ public class EnergyCircuit {
         return blocks.stream().anyMatch(b -> b.getLocation().equals(location));
     }
 
-    public void addBlock(CustomBlock block) {
+    public int getStoredEnergy() {
+        return getEnergyProviders().stream().map(c -> ((IEnergyProvider) c).getEnergyStored()).mapToInt(c -> c).sum();
+    }
+
+    public void powerReceiver(IEnergyReceiver receiver) {
+        final int maxEnergy = getStoredEnergy() / getEnergyReceivers().size();
+        for (CustomBlock b : getEnergyProviders()) {
+            if (b != receiver) {
+                IEnergyProvider iEnergyProvider = ((IEnergyProvider) b);
+                final int sent =
+                        receiver.receiveEnergy(iEnergyProvider.extractEnergy(Math.min(maxEnergy, iEnergyProvider.getEnergyStored()), true)
+                                , true);
+                if (sent > 0) {
+                    iEnergyProvider.extractEnergy(sent, false);
+                    receiver.receiveEnergy(sent, false);
+                }
+                break;
+            }
+        }
+    }
+
+    public List<CustomBlock> getEnergyProviders() {
+        return blocks.stream().filter(b -> b instanceof IEnergyProvider)
+                .sorted(Comparator.comparing(bb -> ((IEnergyProvider) bb).getEnergyStored()).reversed())
+                .collect(Collectors.toList());
+    }
+
+    public List<CustomBlock> getEnergyReceivers() {
+        return blocks.stream().filter(b -> b instanceof IEnergyReceiver)
+                .collect(Collectors.toList());
+    }
+
+    private void addBlock(CustomBlock block) {
         if (!isOnCircuit(block.getLocation())) {
             blocks.add(block);
         }
     }
 
-    public void recursiveAddBlock(CustomBlock block) {
+    void recursiveAddBlock(CustomBlock block) {
         if (isOnCircuit(block.getLocation())) return;
 
         addBlock(block);

@@ -1,6 +1,8 @@
 package cofh.redstoneflux.api.impl;
 
 import cofh.redstoneflux.api.IEnergyStorage;
+import org.spongepowered.api.data.DataQuery;
+import org.spongepowered.api.data.DataView;
 
 public class EnergyStorage implements IEnergyStorage {
     private int storedEnergy;
@@ -36,5 +38,13 @@ public class EnergyStorage implements IEnergyStorage {
     @Override
     public int getMaxEnergyStored() {
         return maxEnergy;
+    }
+
+    public void saveInfo(DataView view) {
+        view.set(DataQuery.of("Energy"), storedEnergy);
+    }
+
+    public void loadInfo(DataView view) {
+        storedEnergy = view.getInt(DataQuery.of("Energy")).orElse(0);
     }
 }

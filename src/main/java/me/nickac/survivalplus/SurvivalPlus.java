@@ -2,10 +2,7 @@ package me.nickac.survivalplus;
 
 import com.google.inject.Inject;
 import com.google.inject.Injector;
-import me.nickac.survivalplus.customitems.BlockDebuggerItem;
-import me.nickac.survivalplus.customitems.CoalGeneratorBlock;
-import me.nickac.survivalplus.customitems.PowerBankBlock;
-import me.nickac.survivalplus.customitems.WireBlock;
+import me.nickac.survivalplus.customitems.*;
 import me.nickac.survivalplus.customitems.internal.events.CustomBlocksEventListener;
 import me.nickac.survivalplus.customitems.internal.info.CustomItemInformation;
 import me.nickac.survivalplus.energy.EnergyMap;
@@ -107,6 +104,12 @@ public class SurvivalPlus {
                 .named("Block Debugger")
                 .withModel("block_debugger.json")
                 .ownedBy(BlockDebuggerItem.class)
+                .build());
+
+        itemManager.registerItem(CustomItemInformation.builder()
+                .named("Energy Map Inspector")
+                .withModel("energy_map_inspector.json")
+                .ownedBy(EnergyMapInspectorItem.class)
                 .build());
     }
 

@@ -1,18 +1,56 @@
 package me.nickac.survivalplus.energy;
 
+import cofh.redstoneflux.api.IEnergyReceiver;
+import com.google.inject.Inject;
 import com.google.inject.Singleton;
 import me.nickac.survivalplus.customitems.internal.CustomBlock;
+import me.nickac.survivalplus.customitems.internal.ITickableBlock;
+import org.spongepowered.api.Sponge;
+import org.spongepowered.api.plugin.PluginContainer;
 import org.spongepowered.api.world.Location;
 
 import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.List;
 import java.util.Optional;
+import java.util.concurrent.TimeUnit;
 import java.util.stream.Collectors;
 import java.util.stream.Stream;
 
 @Singleton
 public class EnergyMap {
+
+    public class EnergyTicker implements Runnable {
+        @Override
+        public void run() {
+            for (EnergyCircuit circuit : getCircuits()) {
+                for (CustomBlock block : circuit.getBlocks()) {
+
+                    if (block instanceof ITickableBlock)
+                        ((ITickableBlock) block).tick();
+
+                    if (block instanceof IEnergyReceiver) {
+                        final IEnergyReceiver receiver = (IEnergyReceiver) block;
+                        circuit.powerReceiver(receiver);
+                    }
+                }
+            }
+        }
+    }
+
+
+    @Inject
+    public EnergyMap(PluginContainer container) {
+        registerBlockTick(container);
+    }
+
+    private void registerBlockTick(PluginContainer container) {
+        Sponge.getScheduler().createTaskBuilder()
+                .interval(50, TimeUnit.MILLISECONDS)
+                .execute(new EnergyTicker())
+                .submit(container);
+    }
+
     private List<EnergyCircuit> circuits = new ArrayList<>();
     private List<CustomBlock> queuedBlocks = new ArrayList<>();
 
@@ -23,7 +61,6 @@ public class EnergyMap {
     public void queueBlock(CustomBlock block) {
         queuedBlocks.add(block);
     }
-
 
     public void processQueuedBlocks() {
         queuedBlocks.forEach(this::recursiveCreateNewCircuit);
@@ -50,7 +87,7 @@ public class EnergyMap {
         }
     }
 
-    public boolean removeFromAnyCircuit(CustomBlock block) {
+    public void removeFromAnyCircuit(CustomBlock block) {
         final List<EnergyCircuit> toRegen =
                 circuits.stream()
                         .filter(c -> c.getBlocks().removeIf(cc -> cc.equals(block)))
@@ -62,15 +99,14 @@ public class EnergyMap {
 
         toRegen.stream().flatMap(c -> c.getBlocks().stream()).forEach(this::recursiveCreateNewCircuit);
 
-        return true;
     }
-    public boolean removeFromCircuit(CustomBlock block, EnergyCircuit circuit) {
+    private boolean removeFromCircuit(CustomBlock block, EnergyCircuit circuit) {
         circuit.getBlocks().remove(block);
         circuits.removeIf(c -> c.equals(circuit) && c.getBlocks().isEmpty());
         return true;
     }
 
-    public boolean isBlockOnAnyCircuit(CustomBlock block) {
+    private boolean isBlockOnAnyCircuit(CustomBlock block) {
         return circuits.stream().anyMatch(c -> c.isOnCircuit(block.getLocation()));
     }
 

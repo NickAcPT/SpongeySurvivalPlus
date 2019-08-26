@@ -12,16 +12,11 @@ import org.spongepowered.api.entity.living.player.Player;
 import org.spongepowered.api.event.block.InteractBlockEvent;
 import org.spongepowered.api.service.pagination.PaginationList;
 import org.spongepowered.api.text.Text;
-import org.spongepowered.api.text.action.TextActions;
 import org.spongepowered.api.text.format.TextColors;
-import org.spongepowered.api.text.format.TextStyles;
-import org.spongepowered.api.util.Direction;
 
 import java.util.ArrayList;
-import java.util.Arrays;
 import java.util.List;
 import java.util.Optional;
-import java.util.stream.Collectors;
 
 public class BlockDebuggerItem extends CustomItem {
 
@@ -36,42 +31,31 @@ public class BlockDebuggerItem extends CustomItem {
             final CustomBlock info = itemManager.getManagedBlockInfo(block);
             List<Text> texts = new ArrayList<>();
             final CustomItemInformation itemInfo = info.getInfo();
-            texts.add(Text.of(TextColors.GOLD, "Block Id: ", TextColors.GREEN, itemInfo.getOrdinal()));
-            texts.add(Text.of(TextColors.GOLD, "Item Base: ", TextColors.GREEN, itemInfo.getItemBase().name()));
-            texts.add(Text.of(TextColors.GOLD, "Class Name: ", TextColors.GREEN, info.getClass().getSimpleName()));
-            texts.add(Text.of(TextColors.GOLD, "Model Name: ", TextColors.GREEN, itemInfo.getModelAssetRaw()));
             if (info instanceof IEnergyHandler) {
-                texts.add(Text.of(TextColors.GOLD, "Stored Energy: ",
-                        Text
-                                .builder("Click to read values")
-                                .color(TextColors.GREEN)
-                                .style(TextStyles.UNDERLINE)
-                                .onClick(TextActions.executeCallback(src -> {
-                                    PaginationList.builder().title(Text.of("Block Debugger - Energy Data"))
-                                            .contents(Arrays.stream(Direction.values())
-                                                    .filter(d -> d.isCardinal() && !d.isSecondaryOrdinal())
-                                                    .map(dir -> Text.of(TextColors.GOLD, "Energy Stored on ",
-                                                            dir.name().toLowerCase(), ": ",
-                                                            ((IEnergyHandler) info).getEnergyStored(dir)))
-                                                    .collect(Collectors.toList()))
-                                            .linesPerPage(6)
-                                            .padding(Text.of("-"))
-                                            .sendTo(src);
-                                }))
-                        )
-                );
+                texts.add(
+                        Text.of(TextColors.GOLD, "Stored Energy: ", ((IEnergyHandler) info).getEnergyStored(), " RF"));
             }
 
             final Optional<EnergyCircuit> circuit = energyMap.getCircuitOfBlock(info);
             if (circuit.isPresent()) {
                 final EnergyCircuit energyCircuit = circuit.get();
-                texts.add(Text.of(TextColors.GOLD, "Energy Circuit ID: ", TextColors.GREEN, energyCircuit.getCircuitId()));
-                texts.add(Text.of(TextColors.GOLD, "Block Count on Circuit: ", TextColors.GREEN, energyCircuit.getBlocks().size()));
+                texts.add(Text.of(TextColors.GOLD, "Energy Circuit ID: ", TextColors.GREEN,
+                        energyCircuit.getCircuitId()));
+                texts.add(Text.of(TextColors.GOLD, "Block Count on Circuit: ", TextColors.GREEN,
+                        energyCircuit.getBlocks().size()));
+                texts.add(Text.of(TextColors.GOLD, "Current Energy on Circuit from Providers: ", TextColors.GREEN,
+                        energyCircuit.getStoredEnergy(), " RF"));
             }
+
+            texts.add(Text.of(TextColors.GOLD, "Block Id: ", TextColors.GREEN, itemInfo.getOrdinal()));
+            texts.add(Text.of(TextColors.GOLD, "Item Base: ", TextColors.GREEN, itemInfo.getItemBase().name()));
+            texts.add(Text.of(TextColors.GOLD, "Class Name: ", TextColors.GREEN, info.getClass().getSimpleName()));
+            texts.add(Text.of(TextColors.GOLD, "Model Name: ", TextColors.GREEN, itemInfo.getModelAssetRaw()));
+
 
             PaginationList.builder().title(Text.of("SurvivalPlus - Block Debugger"))
                     .contents(texts)
-                    .linesPerPage(6)
+                    .linesPerPage(7)
                     .padding(Text.of("-"))
                     .sendTo(player);
 
