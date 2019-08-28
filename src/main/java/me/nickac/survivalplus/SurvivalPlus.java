@@ -3,6 +3,7 @@ package me.nickac.survivalplus;
 import com.google.inject.Inject;
 import com.google.inject.Injector;
 import me.nickac.survivalplus.customitems.*;
+import me.nickac.survivalplus.customitems.internal.CustomItemBaseEnum;
 import me.nickac.survivalplus.customitems.internal.events.CustomBlocksEventListener;
 import me.nickac.survivalplus.customitems.internal.info.CustomItemInformation;
 import me.nickac.survivalplus.energy.EnergyMap;
@@ -15,16 +16,20 @@ import me.nickac.survivalplus.misc.data.impl.CustomItemInfoData;
 import org.slf4j.Logger;
 import org.spongepowered.api.Sponge;
 import org.spongepowered.api.command.CommandResult;
+import org.spongepowered.api.command.args.GenericArguments;
 import org.spongepowered.api.command.spec.CommandSpec;
 import org.spongepowered.api.config.ConfigDir;
+import org.spongepowered.api.data.DataContainer;
 import org.spongepowered.api.data.DataRegistration;
 import org.spongepowered.api.data.key.Key;
+import org.spongepowered.api.data.key.Keys;
 import org.spongepowered.api.entity.living.player.Player;
 import org.spongepowered.api.event.Listener;
 import org.spongepowered.api.event.game.GameRegistryEvent;
 import org.spongepowered.api.event.game.state.GamePreInitializationEvent;
 import org.spongepowered.api.event.game.state.GameStartedServerEvent;
 import org.spongepowered.api.event.world.chunk.LoadChunkEvent;
+import org.spongepowered.api.item.inventory.ItemStack;
 import org.spongepowered.api.plugin.Plugin;
 import org.spongepowered.api.plugin.PluginContainer;
 import org.spongepowered.api.service.pagination.PaginationList;
@@ -266,6 +271,30 @@ public class SurvivalPlus {
                     return CommandResult.success();
                 })
                 .build(), "energymap", "circuitmap");
+
+        Sponge.getCommandManager().register(this, CommandSpec.builder()
+                .arguments(GenericArguments.integer(Text.of("count")))
+                .executor((src, args) -> {
+                    int count = args.<Integer>getOne(Text.of("count")).orElse(0);
+
+                    if (src instanceof Player) {
+
+                        CustomItemBaseEnum countedItem = CustomItemBaseEnum.getForCountedItem(count);
+
+                        DataContainer dataContainer = ItemStack.builder()
+                                .itemType(countedItem.getItemType())
+                                .add(Keys.UNBREAKABLE, true)
+                                .add(Keys.HIDE_UNBREAKABLE, true)
+                                .add(Keys.ITEM_DURABILITY, countedItem.getMaxDamage() - (count % countedItem.getMaxDamage()))
+                                .build().toContainer();
+
+                        ItemStack stack = ItemStack.builder().fromContainer(dataContainer).build();
+                        ((Player) src).getInventory().offer(stack);
+
+                    }
+                    return CommandResult.successCount(count);
+                })
+                .build(), "debugcustomitem");
     }
 
 }
