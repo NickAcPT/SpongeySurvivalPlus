@@ -28,8 +28,14 @@ import org.spongepowered.api.event.Listener;
 import org.spongepowered.api.event.game.GameRegistryEvent;
 import org.spongepowered.api.event.game.state.GamePreInitializationEvent;
 import org.spongepowered.api.event.game.state.GameStartedServerEvent;
+import org.spongepowered.api.event.item.inventory.ClickInventoryEvent;
+import org.spongepowered.api.event.item.inventory.InteractInventoryEvent;
 import org.spongepowered.api.event.world.chunk.LoadChunkEvent;
+import org.spongepowered.api.item.inventory.Inventory;
+import org.spongepowered.api.item.inventory.InventoryArchetypes;
 import org.spongepowered.api.item.inventory.ItemStack;
+import org.spongepowered.api.item.inventory.property.InventoryTitle;
+import org.spongepowered.api.item.inventory.property.SlotPos;
 import org.spongepowered.api.plugin.Plugin;
 import org.spongepowered.api.plugin.PluginContainer;
 import org.spongepowered.api.service.pagination.PaginationList;
@@ -41,6 +47,8 @@ import org.spongepowered.api.text.format.TextColors;
 import org.spongepowered.api.text.format.TextStyles;
 
 import java.nio.file.Path;
+
+import static org.spongepowered.api.item.inventory.query.QueryOperationTypes.INVENTORY_PROPERTY;
 
 @Plugin(
         id = "survivalplus",
@@ -273,28 +281,63 @@ public class SurvivalPlus {
                 .build(), "energymap", "circuitmap");
 
         Sponge.getCommandManager().register(this, CommandSpec.builder()
+                .executor((src, args) -> {
+                    if (!(src instanceof Player)) return CommandResult.empty();
+
+                    final Inventory inv = Inventory.builder().of(InventoryArchetypes.DOUBLE_CHEST)
+                            .property(InventoryTitle.of(Text.of("Something")))
+                            .listener(ClickInventoryEvent.class, evt -> {
+                                //evt.setCancelled(true);
+                                evt.getTransactions().forEach(slotTransaction -> {
+                                    System.out.println("Transaction");
+                                });
+                            })
+                            .listener(InteractInventoryEvent.class, evt2 -> {
+                                System.out.println("reee");
+                                if (evt2 instanceof ClickInventoryEvent.Shift) {
+                                    System.out.println("shift move");
+                                }
+                            })
+                            .build(container);
+
+                    inv.query(INVENTORY_PROPERTY.of(SlotPos.of(0, 0))).offer(getGenericItemStackForCustomItem(74));
+                    inv.query(INVENTORY_PROPERTY.of(SlotPos.of(0, 5))).offer(getGenericItemStackForCustomItem(73));
+
+                    ((Player) src).openInventory(inv);
+
+
+                    return CommandResult.success();
+                })
+                .build(), "invtest");
+
+        Sponge.getCommandManager().register(this, CommandSpec.builder()
                 .arguments(GenericArguments.integer(Text.of("count")))
                 .executor((src, args) -> {
                     int count = args.<Integer>getOne(Text.of("count")).orElse(0);
 
                     if (src instanceof Player) {
 
-                        CustomItemBaseEnum countedItem = CustomItemBaseEnum.getForCountedItem(count);
-
-                        DataContainer dataContainer = ItemStack.builder()
-                                .itemType(countedItem.getItemType())
-                                .add(Keys.UNBREAKABLE, true)
-                                .add(Keys.HIDE_UNBREAKABLE, true)
-                                .add(Keys.ITEM_DURABILITY, countedItem.getMaxDamage() - (count % countedItem.getMaxDamage()))
-                                .build().toContainer();
-
-                        ItemStack stack = ItemStack.builder().fromContainer(dataContainer).build();
+                        ItemStack stack = getGenericItemStackForCustomItem(count);
                         ((Player) src).getInventory().offer(stack);
 
                     }
                     return CommandResult.successCount(count);
                 })
                 .build(), "debugcustomitem");
+    }
+
+    private ItemStack getGenericItemStackForCustomItem(int count) {
+        CustomItemBaseEnum countedItem = CustomItemBaseEnum.getForCountedItem(count);
+
+        DataContainer dataContainer = ItemStack.builder()
+                .itemType(countedItem.getItemType())
+                .add(Keys.UNBREAKABLE, true)
+                .add(Keys.HIDE_UNBREAKABLE, true)
+                .add(Keys.ITEM_DURABILITY,
+                        countedItem.getMaxDamage() - (count % countedItem.getMaxDamage()))
+                .build().toContainer();
+
+        return ItemStack.builder().fromContainer(dataContainer).build();
     }
 
 }

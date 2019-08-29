@@ -5,6 +5,8 @@ import com.google.common.io.Files;
 import com.google.inject.Inject;
 import com.google.inject.Singleton;
 import me.nickac.survivalplus.customitems.internal.CustomItemBaseEnum;
+import me.nickac.survivalplus.misc.ImageUtis;
+import me.nickac.survivalplus.misc.ImageWrapper;
 import me.nickac.survivalplus.misc.model.ResourcePackMeta;
 import me.nickac.survivalplus.misc.model.ResourcePackModel;
 import org.spongepowered.api.Sponge;
@@ -14,6 +16,7 @@ import org.spongepowered.api.plugin.PluginContainer;
 import org.spongepowered.api.resourcepack.ResourcePacks;
 import spark.Spark;
 
+import java.awt.image.BufferedImage;
 import java.io.File;
 import java.io.FileNotFoundException;
 import java.io.IOException;
@@ -30,12 +33,11 @@ import static me.nickac.survivalplus.misc.model.ResourcePackModel.ModelOverride.
 @Singleton
 public class ResourcePackManager {
 
+    private final String path = "/survivalplus/pack.zip";
     @Inject
     PluginContainer container;
-
     @Inject
     private CustomItemManager itemManager;
-    private final String path = "/survivalplus/pack.zip";
 
     public ResourcePackManager() {
         Supplier<byte[]> packSupplier = Suppliers.memoizeWithExpiration(this::tryGetResourcePackZip, 10,
@@ -51,6 +53,40 @@ public class ResourcePackManager {
             response.type("application/zip");
             return tryGetResourcePackZip();
         });
+
+        Spark.get("/direct/cc/image.png", (request, response) -> {
+            response.type("image/apng");
+            return getColorCorrectedAsset("test-gui.png");
+        });
+    }
+
+    private static int fixColor(int color) {
+        int result = (int) (1.1903 * color + 0.2425);
+        if (result > 255) result = 255;
+        if (result < 0) result = 0;
+        return result;
+    }
+
+    private Object getColorCorrectedAsset(String s) {
+        byte[] assetInfo;
+        try {
+            assetInfo = container.getAsset(s).get().readBytes();
+            BufferedImage img = ImageUtis.fromByteArray(assetInfo);
+
+            final ImageWrapper wrapper = new ImageWrapper(img);
+
+            wrapper.processImage((colors) -> {
+                for (int i = 1; i < colors.length; i++) {
+                    int color = colors[i];
+                    colors[i] = fixColor(color);
+                }
+            });
+            return ImageUtis.toByteArray(img);
+        } catch (IOException e) {
+            e.printStackTrace();
+        }
+
+        return null;
     }
 
     private byte[] tryGetResourcePackZip() {
@@ -78,7 +114,7 @@ public class ResourcePackManager {
         builder.add("custom_block-w.json", getCustomBlockModelBaseObject(-90));
         itemManager.getRegisteredItems().forEach(i -> {
             try {
-                builder.add(i.getModelAssetRawFile  (), i.getModelAsset());
+                builder.add(i.getModelAssetRawFile(), i.getModelAsset());
             } catch (IOException ignored) {
             }
         });
@@ -130,7 +166,7 @@ public class ResourcePackManager {
                     .withPredicate(new ResourcePackModel.ModelOverride.ModelPredicate()
                             .withDamaged(_0)
                             .withDamage(i.getOrdinal() / (baseEnum.getMaxDamage() + 1d))
-                    ).withModel(("block/") + Files.getNameWithoutExtension(i.getModelAssetRaw()))
+                    ).withModel("block/" + Files.getNameWithoutExtension(i.getModelAssetRaw()))
             );
         });
 
