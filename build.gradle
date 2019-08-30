@@ -1,6 +1,47 @@
+buildscript {
+    repositories {
+        maven {
+            name = 'forge'
+            url = 'https://files.minecraftforge.net/maven'
+        }
+        maven {
+            name = 'sponge'
+            url = 'https://repo.spongepowered.org/maven'
+        }
+    }
+
+    dependencies {
+        classpath 'net.minecraftforge.gradle:ForgeGradle:2.3-SNAPSHOT'
+        classpath 'org.spongepowered:mixingradle:0.6-SNAPSHOT'
+    }
+}
+
 plugins {
-    id 'com.github.johnrengelman.shadow' version '5.1.0'
+    id 'com.github.johnrengelman.shadow' version '4.0.4'
     id 'org.spongepowered.plugin' version '0.9.0'
+    id 'net.minecrell.vanillagradle.server' version '2.2-6'
+}
+
+apply plugin: 'org.spongepowered.mixin'
+
+minecraft {
+    version = '1.12.2'
+    mappings = 'snapshot_20180814'
+    makeObfSourceJar = false
+}
+sourceSets {
+    main {
+        ext.refMap = "mixins.survivalplus.refmap.json"
+    }
+}
+
+jar {
+    manifest.attributes(
+            'TweakClass': 'org.spongepowered.asm.launch.MixinTweaker',
+            'MixinConfigs': 'mixins.survivalplus.json',
+            'FMLCorePluginContainsFMLMod': 'true',
+            'FMLAT': 'survivalplus_at.cfg'
+    )
 }
 
 group = pluginGroup
@@ -23,10 +64,16 @@ dependencies {
     compile "com.sparkjava:spark-core:2.8.0"
     implementation 'com.google.code.gson:gson:2.8.5'
     implementation group: 'org.apache.commons', name: 'commons-compress', version: '1.18'
-
+    compile 'org.spongepowered:mixin:0.7.11-SNAPSHOT'
+}
+reobf {
+    shadowJar {
+    }
 }
 
 shadowJar {
+    classifier ''
+    dependsOn reobfJar
     relocate('javax.servlet', 'javaex.servlet')
 }
 
