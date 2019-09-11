@@ -14,8 +14,6 @@ jobs:
       with:
         java-version: 1.8
     - name: Prepare gradle
-        run: |
-          chmod +x gradlew
-          ./gradlew --version
+      run: chmod +x gradlew
     - name: Build with Gradle
       run: ./gradlew shadowJar
